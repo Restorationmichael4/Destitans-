@@ -1,51 +1,95 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
-import json
-from config import BOT_TOKEN
+from telegram.ext import Updater, CommandHandler, CallbackContext
+from config import BOT_TOKEN, CHANNEL_ID
+from features.jokes import get_joke
+from features.quotes import get_quote
+from features.trivia import get_trivia
+import sqlite3
 
-# Load Questions
-with open("questions.json", "r") as file:
-    QUESTIONS = json.load(file)
-
-SCORES = {}  # To track user scores
-
-# Start Command
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await update.message.reply_text(
-        f"Welcome {user.first_name}! Ready for some trivia fun? Type /play to start!"
+# Database setup
+def setup_database():
+    conn = sqlite3.connect("database/users.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, joined_channel BOOLEAN)"
     )
+    conn.commit()
+    conn.close()
 
-# Play Command
-async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    question = random.choice(QUESTIONS)
-    options = [InlineKeyboardButton(opt, callback_data=opt) for opt in question["options"]]
-    keyboard = InlineKeyboardMarkup.from_column(options)
+# Check if user is a member of the channel
+def is_member(update: Update) -> bool:
+    user_id = update.message.from_user.id
+    try:
+        member = update.message.bot.get_chat_member(CHANNEL_ID, user_id)
+        return member.status in ["member", "administrator", "creator"]
+    except:
+        return False
 
-    context.user_data["current_question"] = question
-    await update.message.reply_text(question["question"], reply_markup=keyboard)
+# Add user to the database
+def add_user(user_id, joined):
+    conn = sqlite3.connect("database/users.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT OR IGNORE INTO users (user_id, joined_channel) VALUES (?, ?)",
+        (user_id, joined),
+    )
+    conn.commit()
+    conn.close()
 
-# Handle Answers
-async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    question = context.user_data.get("current_question")
-    answer = query.data
-
-    if answer == question["answer"]:
-        SCORES[query.from_user.id] = SCORES.get(query.from_user.id, 0) + 1
-        await query.answer("Correct!")
+# Welcome message with scrolling text
+def start(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
+    if not is_member(update):
+        add_user(user_id, False)
+        keyboard = [
+            [
+                InlineKeyboardButton("Join Channel", url="https://t.me/destitans"),
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        update.message.reply_text(
+            "You must join our channel to use this bot.", reply_markup=reply_markup
+        )
     else:
-        await query.answer("Wrong!")
+        add_user(user_id, True)
+        update.message.reply_text(
+            "Welcome to Fun Bot! \n🎉 Created by Restoration Michael 🎉"
+        )
 
-    await query.edit_message_text(f"The correct answer was: {question['answer']}")
-    await play(query.message, context)
+# Other commands
+def joke(update: Update, context: CallbackContext) -> None:
+    if is_member(update):
+        update.message.reply_text(get_joke())
+    else:
+        start(update, context)
 
-# Main Function
+def quote(update: Update, context: CallbackContext) -> None:
+    if is_member(update):
+        update.message.reply_text(get_quote())
+    else:
+        start(update, context)
+
+def trivia(update: Update, context: CallbackContext) -> None:
+    if is_member(update):
+        question, answer = get_trivia()
+        context.user_data["trivia_answer"] = answer
+        update.message.reply_text(question)
+    else:
+        start(update, context)
+
+# Main function
+def main():
+    setup_database()
+    updater = Updater(BOT_TOKEN)
+    dispatcher = updater.dispatcher
+
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("joke", joke))
+    dispatcher.add_handler(CommandHandler("quote", quote))
+    dispatcher.add_handler(CommandHandler("trivia", trivia))
+
+    updater.start_polling()
+    updater.idle()
+
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("play", play))
-    app.add_handler(CallbackQueryHandler(handle_answer))
-
-    print("Bot is running...")
-    app.run_polling()
+    main()
