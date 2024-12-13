@@ -1,0 +1,797 @@
+[
+    {
+        "question": "What is the largest mammal in the world?",
+        "options": ["Blue Whale", "Elephant", "Giraffe", "Whale Shark"],
+        "answer": "Blue Whale"
+    },
+    {
+        "question": "Which planet is known as the 'Red Planet'?",
+        "options": ["Mars", "Venus", "Jupiter", "Saturn"],
+        "answer": "Mars"
+    },
+    {
+        "question": "What is the capital of France?",
+        "options": ["Paris", "London", "Berlin", "Madrid"],
+        "answer": "Paris"
+    },
+    {
+        "question": "Who invented the light bulb?",
+        "options": ["Thomas Edison", "Alexander Graham Bell", "Benjamin Franklin", "Nikola Tesla"],
+        "answer": "Thomas Edison"
+    },
+    {
+        "question": "What is the smallest continent?",
+        "options": ["Australia", "Europe", "Antarctica", "South America"],
+        "answer": "Australia"
+    },
+    {
+        "question": "What element does 'O' represent on the periodic table?",
+        "options": ["Oxygen", "Hydrogen", "Carbon", "Nitrogen"],
+        "answer": "Oxygen"
+    },
+    {
+        "question": "How many planets are in the Solar System?",
+        "options": ["8", "7", "9", "10"],
+        "answer": "8"
+    },
+    {
+        "question": "What gas do plants primarily absorb from the atmosphere?",
+        "options": ["Carbon Dioxide", "Oxygen", "Nitrogen", "Helium"],
+        "answer": "Carbon Dioxide"
+    },
+    {
+        "question": "What is the term for a star that suddenly becomes extremely bright and then fades away?",
+        "options": ["Supernova", "Asteroid", "Comet", "Galaxy"],
+        "answer": "Supernova"
+    },
+    {
+        "question": "Which scientist is known for the theory of relativity?",
+        "options": ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Niels Bohr"],
+        "answer": "Albert Einstein"
+    },
+    {
+        "question": "In which year did World War II end?",
+        "options": ["1945", "1939", "1950", "1963"],
+        "answer": "1945"
+    },
+    {
+        "question": "Who was the first President of the United States?",
+        "options": ["George Washington", "Thomas Jefferson", "Abraham Lincoln", "John Adams"],
+        "answer": "George Washington"
+    },
+    {
+        "question": "In which country did the Industrial Revolution begin?",
+        "options": ["England", "France", "Germany", "United States"],
+        "answer": "England"
+    },
+    {
+        "question": "Who is known as the 'Father of Modern Physics'?",
+        "options": ["Galileo Galilei", "Einstein", "Newton", "Hawking"],
+        "answer": "Galileo Galilei"
+    },
+    {
+        "question": "What is the longest river in the world?",
+        "options": ["Nile", "Amazon", "Yangtze", "Mississippi"],
+        "answer": "Nile"
+    },
+    {
+        "question": "Which country is known as the 'Land of the Rising Sun'?",
+        "options": ["Japan", "China", "Australia", "India"],
+        "answer": "Japan"
+    },
+    {
+        "question": "Mount Everest is part of which mountain range?",
+        "options": ["Himalayas", "Rockies", "Alps", "Andes"],
+        "answer": "Himalayas"
+    },
+    {
+        "question": "What is the capital of Canada?",
+        "options": ["Ottawa", "Toronto", "Vancouver", "Montreal"],
+        "answer": "Ottawa"
+    },
+    {
+        "question": "Which desert is the largest in the world?",
+        "options": ["Sahara", "Gobi", "Kalahari", "Thar"],
+        "answer": "Sahara"
+    },
+    {
+        "question": "Which movie features the character Jack Sparrow?",
+        "options": ["Pirates of the Caribbean", "Titanic", "Jaws", "Avatar"],
+        "answer": "Pirates of the Caribbean"
+    },
+    {
+        "question": "What is the name of the fictional town where the TV show Stranger Things takes place?",
+        "options": ["Hawkins", "Riverdale", "Sunnydale", "Mystic Falls"],
+        "answer": "Hawkins"
+    },
+    {
+        "question": "Who is the creator of the famous superhero character Spider-Man?",
+        "options": ["Stan Lee", "Jack Kirby", "Joe Simon", "Steve Ditko"],
+        "answer": "Stan Lee"
+    },
+    {
+        "question": "Which pop star is known as the 'Queen of Pop'?",
+        "options": ["Madonna", "Lady Gaga", "Beyoncé", "Kylie Minogue"],
+        "answer": "Madonna"
+    },
+    {
+        "question": "In the TV series Friends, which character says, 'How you doin'?'",
+        "options": ["Joey Tribbiani", "Ross Geller", "Chandler Bing", "Monica Geller"],
+        "answer": "Joey Tribbiani"
+    },
+    {
+        "question": "What is the value of π (pi) to two decimal places?",
+        "options": ["3.14", "3.12", "3.15", "3.00"],
+        "answer": "3.14"
+    },
+    {
+        "question": "What is the square root of 144?",
+        "options": ["12", "14", "10", "16"],
+        "answer": "12"
+    },
+    {
+        "question": "What is the term for a number that is divisible only by 1 and itself?",
+        "options": ["Prime Number", "Composite Number", "Even Number", "Multiple"],
+        "answer": "Prime Number"
+    },
+    {
+        "question": "What do you call a baby kangaroo?",
+        "options": ["Joey", "Pup", "Cub", "Calf"],
+        "answer": "Joey"
+    },
+    {
+        "question": "Which animal is known as the fastest on land?",
+        "options": ["Cheetah", "Lion", "Leopard", "Gazelle"],
+        "answer": "Cheetah"
+    },
+    {
+        "question": "What is the only bird that can fly backward?",
+        "options": ["Hummingbird", "Sparrow", "Eagle", "Falcon"],
+        "answer": "Hummingbird"
+    },
+    {
+        "question": "Which sea creature has eight legs and is known for intelligence and escape tricks?",
+        "options": ["Octopus", "Squid", "Starfish", "Crab"],
+        "answer": "Octopus"
+    },
+    {
+        "question": "What do you call a baby kangaroo?",
+        "options": ["Joey", "Pup", "Calf", "Cub"],
+        "answer": "Joey"
+    },
+    {
+        "question": "Which animal is known as the 'King of the Jungle'?",
+        "options": ["Lion", "Tiger", "Bear", "Cheetah"],
+        "answer": "Lion"
+    },
+    {
+        "question": "How many players are there in a soccer team on the field at once?",
+        "options": ["11", "9", "7", "10"],
+        "answer": "11"
+    },
+    {
+        "question": "Which country hosted the 2020 Olympic Games?",
+        "options": ["Japan", "United States", "China", "Brazil"],
+        "answer": "Japan"
+    },
+    {
+        "question": "In which sport would you find a 'slam dunk'?",
+        "options": ["Basketball", "Volleyball", "Tennis", "Baseball"],
+        "answer": "Basketball"
+    },
+    {
+        "question": "Which tennis player has won the most Grand Slam singles titles in history?",
+        "options": ["Serena Williams", "Roger Federer", "Rafael Nadal", "Novak Djokovic"],
+        "answer": "Serena Williams"
+    },
+    {
+        "question": "In which sport do players try to hit a shuttlecock back and forth over a net?",
+        "options": ["Badminton", "Table Tennis", "Squash", "Tennis"],
+        "answer": "Badminton"
+    },
+    {
+        "question": "Who wrote Romeo and Juliet?",
+        "options": ["William Shakespeare", "Charles Dickens", "Jane Austen", "Oscar Wilde"],
+        "answer": "William Shakespeare"
+    },
+    {
+        "question": "Which fantasy series was written by J.K. Rowling?",
+        "options": ["Harry Potter", "The Lord of the Rings", "Percy Jackson", "Chronicles of Narnia"],
+        "answer": "Harry Potter"
+    },
+    {
+        "question": "What is the name of the famous detective created by Sir Arthur Conan Doyle?",
+        "options": ["Sherlock Holmes", "Hercule Poirot", "Miss Marple", "Sam Spade"],
+        "answer": "Sherlock Holmes"
+    },
+    {
+        "question": "Which book series begins with The Fellowship of the Ring?",
+        "options": ["The Lord of the Rings", "The Hunger Games", "Percy Jackson", "Harry Potter"],
+        "answer": "The Lord of the Rings"
+    },
+    {
+        "question": "Who wrote 1984?",
+        "options": ["George Orwell", "Aldous Huxley", "Ray Bradbury", "J.R.R. Tolkien"],
+        "answer": "George Orwell"
+    },
+    {
+        "question": "Which artist is known as the 'King of Pop'?",
+        "options": ["Michael Jackson", "Elvis Presley", "Prince", "Madonna"],
+        "answer": "Michael Jackson"
+    },
+    {
+        "question": "What band sang the song Bohemian Rhapsody?",
+        "options": ["Queen", "The Beatles", "Led Zeppelin", "Pink Floyd"],
+        "answer": "Queen"
+    },
+    {
+        "question": "What genre of music originated in the southern United States and is characterized by its rhythm and storytelling?",
+        "options": ["Country", "Blues", "Jazz", "Rock"],
+        "answer": "Country"
+    },
+    {
+        "question": "Which artist is known for the hit song Shape of You?",
+        "options": ["Ed Sheeran", "Justin Bieber", "Shawn Mendes", "Ariana Grande"],
+        "answer": "Ed Sheeran"
+    },
+    {
+        "question": "What is the musical term for gradually getting louder?",
+        "options": ["Crescendo", "Forte", "Allegro", "Pianissimo"],
+        "answer": "Crescendo"
+    },
+    {
+        "question": "Which planet is the closest to the Sun?",
+        "options": ["Mercury", "Venus", "Earth", "Mars"],
+        "answer": "Mercury"
+    },
+    {
+        "question": "Which ocean is the largest in the world?",
+        "options": ["Pacific", "Atlantic", "Indian", "Arctic"],
+        "answer": "Pacific"
+    },
+    {
+        "question": "What is the main gas that makes up the air we breathe?",
+        "options": ["Nitrogen", "Oxygen", "Carbon Dioxide", "Hydrogen"],
+        "answer": "Nitrogen"
+    },
+    {
+        "question": "Which historical figure is famous for saying 'I think, therefore I am'?",
+        "options": ["René Descartes", "Plato", "Aristotle", "Socrates"],
+        "answer": "René Descartes"
+    },
+    {
+        "question": "What is the largest organ in the human body?",
+        "options": ["Skin", "Heart", "Liver", "Lungs"],
+        "answer": "Skin"
+    },
+    {
+        "question": "Which country is known for its tulips and windmills?",
+        "options": ["Netherlands", "Switzerland", "Denmark", "Belgium"],
+        "answer": "Netherlands"
+    },
+    {
+        "question": "What do you call a group of stars bound together in space?",
+        "options": ["Galaxy", "Nebula", "Cluster", "Comet"],
+        "answer": "Galaxy"
+    },
+    {
+        "question": "Which creature is known as the largest living reptile?",
+        "options": ["Saltwater Crocodile", "Komodo Dragon", "Gila Monster", "Alligator"],
+        "answer": "Saltwater Crocodile"
+    },
+    {
+        "question": "Which famous scientist developed the three laws of motion?",
+        "options": ["Isaac Newton", "Albert Einstein", "Galileo", "Kepler"],
+        "answer": "Isaac Newton"
+    },
+    {
+        "question": "Which musical instrument has black and white keys?",
+        "options": ["Piano", "Violin", "Trumpet", "Flute"],
+        "answer": "Piano"
+    },
+    {
+        "question": "Which element has the chemical symbol 'Au'?",
+        "options": ["Gold", "Silver", "Copper", "Iron"],
+        "answer": "Gold"
+    },
+    {
+        "question": "What does the word 'quiz' mean?",
+        "options": ["Test of Knowledge", "Game", "Interview", "Contest"],
+        "answer": "Test of Knowledge"
+    },
+    {
+        "question": "Which language is the most spoken language in the world?",
+        "options": ["Mandarin", "English", "Spanish", "Hindi"],
+        "answer": "Mandarin"
+    },
+    {
+        "question": "Which planet is known as the 'Morning Star' or 'Evening Star'?",
+        "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+        "answer": "Venus"
+    },
+    {
+        "question": "What is the capital city of Italy?",
+        "options": ["Rome", "Paris", "Berlin", "Madrid"],
+        "answer": "Rome"
+    },
+    {
+        "question": "Which animal is known as the largest living mammal?",
+        "options": ["Blue Whale", "Elephant", "Giraffe", "Hippopotamus"],
+        "answer": "Blue Whale"
+    },
+    {
+        "question": "Which element has the symbol 'H' on the periodic table?",
+        "options": ["Hydrogen", "Helium", "Hafnium", "Holmium"],
+        "answer": "Hydrogen"
+    },
+    {
+        "question": "What is the term for an animal that only eats plants?",
+        "options": ["Herbivore", "Carnivore", "Omnivore", "Insectivore"],
+        "answer": "Herbivore"
+    },
+    {
+        "question": "Which organ pumps blood throughout the human body?",
+        "options": ["Heart", "Lungs", "Stomach", "Kidneys"],
+        "answer": "Heart"
+    },
+    {
+        "question": "Who painted the Mona Lisa?",
+        "options": ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Claude Monet"],
+        "answer": "Leonardo da Vinci"
+    },
+    {
+        "question": "What is the largest island in the world?",
+        "options": ["Greenland", "Australia", "Madagascar", "New Guinea"],
+        "answer": "Greenland"
+    },
+    {
+        "question": "Which famous scientist is known for developing the laws of gravity?",
+        "options": ["Isaac Newton", "Galileo Galilei", "Albert Einstein", "Niels Bohr"],
+        "answer": "Isaac Newton"
+    },
+    {
+        "question": "Which language has the most number of native speakers in the world?",
+        "options": ["Mandarin", "Spanish", "English", "Hindi"],
+        "answer": "Mandarin"
+    },
+    {
+        "question": "Which organ in the human body is responsible for digestion?",
+        "options": ["Stomach", "Liver", "Pancreas", "Intestines"],
+        "answer": "Stomach"
+    },
+    {
+        "question": "Which country is famous for inventing the game of chess?",
+        "options": ["India", "China", "Russia", "Iran"],
+        "answer": "India"
+    },
+    {
+        "question": "Which city is known as the 'City of Love'?",
+        "options": ["Paris", "Rome", "Venice", "Prague"],
+        "answer": "Paris"
+    },
+    {
+        "question": "Which Disney movie features a young lion cub named Simba?",
+        "options": ["The Lion King", "Aladdin", "Frozen", "Mulan"],
+        "answer": "The Lion King"
+    },
+    {
+        "question": "Which country is known as the 'Land of the Midnight Sun'?",
+        "options": ["Norway", "Sweden", "Canada", "Iceland"],
+        "answer": "Norway"
+    },
+    {
+        "question": "What is the term for a person who studies fossils?",
+        "options": ["Paleontologist", "Geologist", "Archaeologist", "Biologist"],
+        "answer": "Paleontologist"
+    },
+    {
+        "question": "Which book series includes dragons and knights in the story?",
+        "options": ["Game of Thrones", "Percy Jackson", "Harry Potter", "The Hobbit"],
+        "answer": "Game of Thrones"
+    },
+    {
+        "question": "What is the speed of light in a vacuum?",
+        "options": ["299,792,458 meters per second", "150,000,000 meters per second", "300,000 meters per second", "450,000 meters per second"],
+        "answer": "299,792,458 meters per second"
+    },
+    {
+        "question": "Which musical term means 'play loudly'?",
+        "options": ["Forte", "Piano", "Legato", "Staccato"],
+        "answer": "Forte"
+    },
+    {
+        "question": "What is the tallest mountain on Earth?",
+        "options": ["Mount Everest", "K2", "Kilimanjaro", "Denali"],
+        "answer": "Mount Everest"
+    },
+    {
+        "question": "Which river is the longest in the world?",
+        "options": ["Nile", "Amazon", "Yangtze", "Mississippi"],
+        "answer": "Nile"
+    },
+    {
+        "question": "Which planet is known as the 'Gaseous Giant'?",
+        "options": ["Jupiter", "Mars", "Venus", "Neptune"],
+        "answer": "Jupiter"
+    },
+    {
+        "question": "What do you call a large group of birds flying together?",
+        "options": ["Flock", "Pack", "Swarm", "Cluster"],
+        "answer": "Flock"
+    },
+    {
+        "question": "Which chemical element is represented by the symbol 'Fe'?",
+        "options": ["Iron", "Francium", "Fermium", "Fluorine"],
+        "answer": "Iron"
+    },
+    {
+        "question": "Who is known as the 'Father of Modern Chemistry'?",
+        "options": ["Antoine Lavoisier", "Albert Einstein", "Isaac Newton", "Galileo"],
+        "answer": "Antoine Lavoisier"
+    },
+    {
+        "question": "What is the study of plants called?",
+        "options": ["Botany", "Zoology", "Mycology", "Ecology"],
+        "answer": "Botany"
+    },
+    {
+        "question": "Which composer wrote the famous symphony 'Ode to Joy'?",
+        "options": ["Beethoven", "Mozart", "Bach", "Schubert"],
+        "answer": "Beethoven"
+    },
+    {
+        "question": "Which sea is located between Africa and the Arabian Peninsula?",
+        "options": ["Red Sea", "Mediterranean Sea", "Atlantic Ocean", "Indian Ocean"],
+        "answer": "Red Sea"
+    },
+    {
+        "question": "What is the term for animals that eat both plants and meat?",
+        "options": ["Omnivore", "Herbivore", "Carnivore", "Insectivore"],
+        "answer": "Omnivore"
+    },
+    {
+        "question": "Which American holiday is celebrated on the fourth Thursday of November?",
+        "options": ["Thanksgiving", "Halloween", "Independence Day", "Labor Day"],
+        "answer": "Thanksgiving"
+    },
+    {
+        "question": "Which star is the closest to Earth?",
+        "options": ["Proxima Centauri", "Sirius", "Alpha Centauri", "Betelgeuse"],
+        "answer": "Proxima Centauri"
+    },
+    {
+        "question": "Which fruit is known as the 'King of Fruits'?",
+        "options": ["Durian", "Mango", "Banana", "Papaya"],
+        "answer": "Durian"
+    },
+    {
+        "question": "Which animal is known as the fastest on land?",
+        "options": ["Cheetah", "Lion", "Leopard", "Gazelle"],
+        "answer": "Cheetah"
+    },
+    {
+        "question": "What is the only bird that can fly backward?",
+        "options": ["Hummingbird", "Sparrow", "Eagle", "Falcon"],
+        "answer": "Hummingbird"
+    },
+    {
+        "question": "Which sea creature has eight legs and is known for intelligence and escape tricks?",
+        "options": ["Octopus", "Squid", "Starfish", "Crab"],
+        "answer": "Octopus"
+    },
+    {
+        "question": "What do you call a baby kangaroo?",
+        "options": ["Joey", "Pup", "Calf", "Cub"],
+        "answer": "Joey"
+    },
+    {
+        "question": "Which animal is known as the 'King of the Jungle'?",
+        "options": ["Lion", "Tiger", "Bear", "Cheetah"],
+        "answer": "Lion"
+    },
+    {
+        "question": "How many players are there in a soccer team on the field at once?",
+        "options": ["11", "9", "7", "10"],
+        "answer": "11"
+    },
+    {
+        "question": "Which country hosted the 2020 Olympic Games?",
+        "options": ["Japan", "United States", "China", "Brazil"],
+        "answer": "Japan"
+    },
+    {
+        "question": "In which sport would you find a 'slam dunk'?",
+        "options": ["Basketball", "Volleyball", "Tennis", "Baseball"],
+        "answer": "Basketball"
+    },
+    {
+        "question": "Which tennis player has won the most Grand Slam singles titles in history?",
+        "options": ["Serena Williams", "Roger Federer", "Rafael Nadal", "Novak Djokovic"],
+        "answer": "Serena Williams"
+    },
+    {
+        "question": "In which sport do players try to hit a shuttlecock back and forth over a net?",
+        "options": ["Badminton", "Table Tennis", "Squash", "Tennis"],
+        "answer": "Badminton"
+    },
+    {
+        "question": "Who wrote Romeo and Juliet?",
+        "options": ["William Shakespeare", "Charles Dickens", "Jane Austen", "Oscar Wilde"],
+        "answer": "William Shakespeare"
+    },
+    {
+        "question": "Which fantasy series was written by J.K. Rowling?",
+        "options": ["Harry Potter", "The Lord of the Rings", "Percy Jackson", "Chronicles of Narnia"],
+        "answer": "Harry Potter"
+    },
+    {
+        "question": "What is the name of the famous detective created by Sir Arthur Conan Doyle?",
+        "options": ["Sherlock Holmes", "Hercule Poirot", "Miss Marple", "Sam Spade"],
+        "answer": "Sherlock Holmes"
+    },
+    {
+        "question": "Which book series begins with The Fellowship of the Ring?",
+        "options": ["The Lord of the Rings", "The Hunger Games", "Percy Jackson", "Harry Potter"],
+        "answer": "The Lord of the Rings"
+    },
+    {
+        "question": "Who wrote 1984?",
+        "options": ["George Orwell", "Aldous Huxley", "Ray Bradbury", "J.R.R. Tolkien"],
+        "answer": "George Orwell"
+    },
+    {
+        "question": "Which artist is known as the 'King of Pop'?",
+        "options": ["Michael Jackson", "Elvis Presley", "Prince", "Madonna"],
+        "answer": "Michael Jackson"
+    },
+    {
+        "question": "What band sang the song Bohemian Rhapsody?",
+        "options": ["Queen", "The Beatles", "Led Zeppelin", "Pink Floyd"],
+        "answer": "Queen"
+    },
+    {
+        "question": "What genre of music originated in the southern United States and is characterized by its rhythm and storytelling?",
+        "options": ["Country", "Blues", "Jazz", "Rock"],
+        "answer": "Country"
+    },
+    {
+        "question": "Which artist is known for the hit song Shape of You?",
+        "options": ["Ed Sheeran", "Justin Bieber", "Shawn Mendes", "Ariana Grande"],
+        "answer": "Ed Sheeran"
+    },
+    {
+        "question": "What is the musical term for gradually getting louder?",
+        "options": ["Crescendo", "Forte", "Allegro", "Pianissimo"],
+        "answer": "Crescendo"
+    },
+    {
+        "question": "Which planet is the closest to the Sun?",
+        "options": ["Mercury", "Venus", "Earth", "Mars"],
+        "answer": "Mercury"
+    },
+    {
+        "question": "Which ocean is the largest in the world?",
+        "options": ["Pacific", "Atlantic", "Indian", "Arctic"],
+        "answer": "Pacific"
+    },
+    {
+        "question": "What is the main gas that makes up the air we breathe?",
+        "options": ["Nitrogen", "Oxygen", "Carbon Dioxide", "Hydrogen"],
+        "answer": "Nitrogen"
+    },
+    {
+        "question": "Which historical figure is famous for saying 'I think, therefore I am'?",
+        "options": ["René Descartes", "Plato", "Aristotle", "Socrates"],
+        "answer": "René Descartes"
+    },
+    {
+        "question": "What is the largest organ in the human body?",
+        "options": ["Skin", "Heart", "Liver", "Lungs"],
+        "answer": "Skin"
+    },
+    {
+        "question": "Which country is known for its tulips and windmills?",
+        "options": ["Netherlands", "Switzerland", "Denmark", "Belgium"],
+        "answer": "Netherlands"
+    },
+    {
+        "question": "What do you call a group of stars bound together in space?",
+        "options": ["Galaxy", "Nebula", "Cluster", "Comet"],
+        "answer": "Galaxy"
+    },
+    {
+        "question": "Which creature is known as the largest living reptile?",
+        "options": ["Saltwater Crocodile", "Komodo Dragon", "Gila Monster", "Alligator"],
+        "answer": "Saltwater Crocodile"
+    },
+    {
+        "question": "Which famous scientist developed the three laws of motion?",
+        "options": ["Isaac Newton", "Albert Einstein", "Galileo", "Kepler"],
+        "answer": "Isaac Newton"
+    },
+    {
+        "question": "Which musical instrument has black and white keys?",
+        "options": ["Piano", "Violin", "Trumpet", "Flute"],
+        "answer": "Piano"
+    },
+    {
+        "question": "Which element has the chemical symbol 'Au'?",
+        "options": ["Gold", "Silver", "Copper", "Iron"],
+        "answer": "Gold"
+    },
+    {
+        "question": "What does the word 'quiz' mean?",
+        "options": ["Test of Knowledge", "Game", "Interview", "Contest"],
+        "answer": "Test of Knowledge"
+    },
+    {
+        "question": "Which language is the most spoken language in the world?",
+        "options": ["Mandarin", "English", "Spanish", "Hindi"],
+        "answer": "Mandarin"
+    },
+    {
+        "question": "Which element has the chemical symbol 'Fe'?",
+        "options": ["Iron", "Francium", "Fluorine", "Fermium"],
+        "answer": "Iron"
+    },
+    {
+        "question": "What is the main ingredient in guacamole?",
+        "options": ["Tomato", "Avocado", "Onion", "Cilantro"],
+        "answer": "Avocado"
+    },
+    {
+        "question": "Which planet has the most moons?",
+        "options": ["Jupiter", "Saturn", "Mars", "Uranus"],
+        "answer": "Saturn"
+    },
+    {
+        "question": "Which country is known as the 'Land of the Long White Cloud'?",
+        "options": ["Australia", "Canada", "New Zealand", "Norway"],
+        "answer": "New Zealand"
+    },
+    {
+        "question": "Who painted the famous artwork 'Mona Lisa'?",
+        "options": ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"],
+        "answer": "Leonardo da Vinci"
+    },
+    {
+        "question": "Which gas is most abundant in the Earth's atmosphere?",
+        "options": ["Nitrogen", "Oxygen", "Carbon Dioxide", "Hydrogen"],
+        "answer": "Nitrogen"
+    },
+    {
+        "question": "Which mammal is known to be the largest living species?",
+        "options": ["Blue Whale", "Elephant", "Giraffe", "Hippopotamus"],
+        "answer": "Blue Whale"
+    },
+    {
+        "question": "Which technology company developed the iPhone?",
+        "options": ["Samsung", "Apple", "Microsoft", "Google"],
+        "answer": "Apple"
+    },
+    {
+        "question": "Which bird is known for its ability to mimic sounds?",
+        "options": ["Parrot", "Canary", "Eagle", "Falcon"],
+        "answer": "Parrot"
+    },
+    {
+        "question": "Which famous scientist is known for the discovery of gravity?",
+        "options": ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Niels Bohr"],
+        "answer": "Isaac Newton"
+    },
+    {
+        "question": "What is the term for animals that only eat plants?",
+        "options": ["Herbivore", "Carnivore", "Omnivore", "Insectivore"],
+        "answer": "Herbivore"
+    },
+    {
+        "question": "What is the largest ocean on Earth?",
+        "options": ["Atlantic", "Indian", "Arctic", "Pacific"],
+        "answer": "Pacific"
+    },
+    {
+        "question": "Which country is known for inventing sushi?",
+        "options": ["Japan", "China", "Korea", "Vietnam"],
+        "answer": "Japan"
+    },
+    {
+        "question": "What does the term 'DNA' stand for?",
+        "options": ["Deoxyribonucleic Acid", "Dioxygenic Acid", "Deuterium Nucleic Acid", "Dominant Nucleus Arrangement"],
+        "answer": "Deoxyribonucleic Acid"
+    },
+    {
+        "question": "Which ancient civilization built the Pyramids of Giza?",
+        "options": ["Romans", "Greeks", "Aztecs", "Egyptians"],
+        "answer": "Egyptians"
+    },
+    {
+        "question": "Which element has the symbol 'Au'?",
+        "options": ["Silver", "Gold", "Aluminum", "Argon"],
+        "answer": "Gold"
+    },
+    {
+        "question": "Which composer created the famous piece 'Symphony No. 5'?",
+        "options": ["Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Franz Schubert"],
+        "answer": "Ludwig van Beethoven"
+    },
+    {
+        "question": "Which planet is known as the 'Morning Star'?",
+        "options": ["Venus", "Mars", "Jupiter", "Mercury"],
+        "answer": "Venus"
+    },
+    {
+        "question": "Which animal is known as the largest reptile in the world?",
+        "options": ["Crocodile", "Komodo Dragon", "Anaconda", "Iguana"],
+        "answer": "Crocodile"
+    },
+    {
+        "question": "Which language has the most native speakers worldwide?",
+        "options": ["English", "Mandarin", "Spanish", "Hindi"],
+        "answer": "Mandarin"
+    },
+    {
+        "question": "Which island group is located in the Atlantic Ocean?",
+        "options": ["Azores", "Galápagos", "Hawaii", "Bermuda"],
+        "answer": "Azores"
+    },
+    {
+        "question": "Which technology was invented by Johannes Gutenberg?",
+        "options": ["Printing Press", "Telephone", "Television", "Radio"],
+        "answer": "Printing Press"
+    },
+    {
+        "question": "Which superhero is known as the 'Friendly Neighborhood Spider-Man'?",
+        "options": ["Batman", "Iron Man", "Spider-Man", "Hawkeye"],
+        "answer": "Spider-Man"
+    },
+    {
+        "question": "Which mineral is the hardest on the Mohs scale?",
+        "options": ["Diamond", "Quartz", "Topaz", "Sapphire"],
+        "answer": "Diamond"
+    },
+    {
+        "question": "Which famous bridge connects San Francisco with Marin County?",
+        "options": ["Brooklyn Bridge", "Golden Gate Bridge", "Tower Bridge", "Sydney Harbour Bridge"],
+        "answer": "Golden Gate Bridge"
+    },
+    {
+        "question": "What is the term for a large collection of stars, gas, and dust bound together by gravity?",
+        "options": ["Galaxy", "Nebula", "Cluster", "Comet"],
+        "answer": "Galaxy"
+    },
+    {
+        "question": "Which sports team has won the most Super Bowls?",
+        "options": ["New England Patriots", "Pittsburgh Steelers", "San Francisco 49ers", "Dallas Cowboys"],
+        "answer": "New England Patriots"
+    },
+    {
+        "question": "What do you call the study of the Earth's physical features?",
+        "options": ["Geology", "Geography", "Astronomy", "Meteorology"],
+        "answer": "Geography"
+    },
+    {
+        "question": "Who invented the concept of 'Relativity'?",
+        "options": ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Niels Bohr"],
+        "answer": "Albert Einstein"
+    },
+    {
+        "question": "Which country is known for its tulip fields and windmills?",
+        "options": ["France", "Netherlands", "Germany", "Belgium"],
+        "answer": "Netherlands"
+    },
+    {
+        "question": "What is the term for animals that are active at night?",
+        "options": ["Diurnal", "Nocturnal", "Crepuscular", "Vernal"],
+        "answer": "Nocturnal"
+    },
+    {
+        "question": "Which philosopher is known for his famous quote 'I think, therefore I am'?",
+        "options": ["Socrates", "Plato", "Aristotle", "René Descartes"],
+        "answer": "René Descartes"
+    },
+    {
+        "question": "Which popular social media platform was launched in 2004?",
+        "options": ["Facebook", "Twitter", "Instagram", "TikTok"],
+        "answer": "Facebook"
+    }
+]
