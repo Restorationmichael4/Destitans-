@@ -1,21 +1,29 @@
 body {
+    background-color: #121212;
+    color: #ffffff;
     font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-form {
-    max-width: 500px;
-    margin: auto;
-    padding: 10px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-input, button {
+.marquee {
+    font-size: 2rem;
+    font-weight: bold;
+    animation: scroll 10s linear infinite;
+    white-space: nowrap;
+    overflow: hidden;
     width: 100%;
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 16px;
+    text-align: center;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
 }
