@@ -1,2 +1,2 @@
 BOT_TOKEN = "7992521280:AAEnSyYaWu57nTklnvxYny2UfrrZSYtYQqM"
-CHANNEL_ID = "@destitans""
+CHANNEL_ID = "@destitans"
