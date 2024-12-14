@@ -1,95 +1,188 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext
-from config import BOT_TOKEN, CHANNEL_ID
-from features.jokes import get_joke
-from features.quotes import get_quote
-from features.trivia import get_trivia
-import sqlite3
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+import json
+import random
+from config import BOT_TOKEN
 
-# Database setup
-def setup_database():
-    conn = sqlite3.connect("database/users.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, joined_channel BOOLEAN)"
-    )
-    conn.commit()
-    conn.close()
+# Load Data from JSON Files
+with open("questions.json", "r") as file:
+    QUESTIONS = json.load(file)
 
-# Check if user is a member of the channel
-def is_member(update: Update) -> bool:
-    user_id = update.message.from_user.id
+with open("jokes.json", "r") as file:
+    JOKES = json.load(file)
+
+with open("quotes.json", "r") as file:
+    QUOTES = json.load(file)
+
+with open("horoscopes.json", "r") as file:
+    HOROSCOPES = json.load(file)
+
+with open("memes.json", "r") as file:
+    MEMES = json.load(file)
+
+SCORES = {}  # Dictionary to track user scores
+REQUIRED_CHANNEL = "@destitans"  # The username of the required channel
+REDIRECT_CHANNEL = "https://t.me/cybrpnk7"  # The channel to send new users to
+
+# Check User Membership in Channel
+async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
     try:
-        member = update.message.bot.get_chat_member(CHANNEL_ID, user_id)
-        return member.status in ["member", "administrator", "creator"]
-    except:
+        member_status = await context.bot.get_chat_member(chat_id=REQUIRED_CHANNEL, user_id=user_id)
+        return member_status.status in ["member", "administrator", "creator"]
+    except Exception:
         return False
 
-# Add user to the database
-def add_user(user_id, joined):
-    conn = sqlite3.connect("database/users.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT OR IGNORE INTO users (user_id, joined_channel) VALUES (?, ?)",
-        (user_id, joined),
+# Start Command
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    if await is_user_member(update, context):
+        await update.message.reply_text(
+            f"Welcome {user.first_name}! Ready for some fun? Type /play for trivia, /joke for a joke, /quote for a quote, /horoscope for a horoscope, or /meme for a meme!"
+        )
+    else:
+        await update.message.reply_text(
+            f"Hi {user.first_name}, you need to join our channel first to use this bot.\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, come back and type /start again!"
+        )
+
+# Trivia Play Command
+async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to play trivia!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /play again!"
+        )
+        return
+
+    # Pick a random question
+    question = random.choice(QUESTIONS)
+    context.user_data["current_question"] = question  # Save question to user data
+
+    # Create inline buttons for options
+    options = [
+        InlineKeyboardButton(text=option, callback_data=option)
+        for option in question["options"]
+    ]
+    keyboard = InlineKeyboardMarkup.from_column(options)
+
+    # Send question with options
+    await update.message.reply_text(question["question"], reply_markup=keyboard)
+
+# Handle Trivia Answer Callback
+async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    question = context.user_data.get("current_question")  # Retrieve the question
+    user_id = query.from_user.id
+
+    if not question:
+        await query.answer("No active question. Use /play to start!")
+        return
+
+    selected_option = query.data
+    correct_answer = question["answer"]
+
+    if selected_option == correct_answer:
+        SCORES[user_id] = SCORES.get(user_id, 0) + 1
+        await query.answer("Correct! 🎉")
+    else:
+        await query.answer("Wrong! 😢")
+
+    # Send correct answer and user's current score
+    await query.edit_message_text(
+        f"The correct answer was: {correct_answer}\n"
+        f"Your current score: {SCORES.get(user_id, 0)}"
     )
-    conn.commit()
-    conn.close()
 
-# Welcome message with scrolling text
-def start(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.from_user.id
-    if not is_member(update):
-        add_user(user_id, False)
-        keyboard = [
-            [
-                InlineKeyboardButton("Join Channel", url="https://t.me/destitans"),
-            ]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text(
-            "You must join our channel to use this bot.", reply_markup=reply_markup
+    # Start a new question
+    await play(query.message, context)
+
+# Command to Show Leaderboard
+async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to view the leaderboard!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /leaderboard again!"
         )
-    else:
-        add_user(user_id, True)
-        update.message.reply_text(
-            "Welcome to Fun Bot! \n🎉 Created by Restoration Michael 🎉"
+        return
+
+    if not SCORES:
+        await update.message.reply_text("No scores yet! Play some games to get started.")
+        return
+
+    leaderboard_text = "🏆 Leaderboard 🏆\n\n"
+    sorted_scores = sorted(SCORES.items(), key=lambda x: x[1], reverse=True)
+    for user_id, score in sorted_scores:
+        leaderboard_text += f"User {user_id}: {score}\n"
+
+    await update.message.reply_text(leaderboard_text)
+
+# Command to Get a Random Joke
+async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to get jokes!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /joke again!"
         )
+        return
 
-# Other commands
-def joke(update: Update, context: CallbackContext) -> None:
-    if is_member(update):
-        update.message.reply_text(get_joke())
-    else:
-        start(update, context)
+    random_joke = random.choice(JOKES)
+    await update.message.reply_text(random_joke)
 
-def quote(update: Update, context: CallbackContext) -> None:
-    if is_member(update):
-        update.message.reply_text(get_quote())
-    else:
-        start(update, context)
+# Command to Get a Random Quote
+async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to get quotes!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /quote again!"
+        )
+        return
 
-def trivia(update: Update, context: CallbackContext) -> None:
-    if is_member(update):
-        question, answer = get_trivia()
-        context.user_data["trivia_answer"] = answer
-        update.message.reply_text(question)
-    else:
-        start(update, context)
+    random_quote = random.choice(QUOTES)
+    await update.message.reply_text(random_quote)
 
-# Main function
-def main():
-    setup_database()
-    updater = Updater(BOT_TOKEN)
-    dispatcher = updater.dispatcher
+# Command to Get a Horoscope
+async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to get horoscopes!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /horoscope again!"
+        )
+        return
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("joke", joke))
-    dispatcher.add_handler(CommandHandler("quote", quote))
-    dispatcher.add_handler(CommandHandler("trivia", trivia))
+    random_horoscope = random.choice(HOROSCOPES)
+    await update.message.reply_text(random_horoscope)
 
-    updater.start_polling()
-    updater.idle()
+# Command to Get a Meme
+async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(
+            f"You need to join our channel to get memes!\n\n"
+            f"Join here: {REQUIRED_CHANNEL}\n\n"
+            f"Once you've joined, type /meme again!"
+        )
+        return
+
+    random_meme = random.choice(MEMES)
+    await update.message.reply_photo(random_meme)
+
+# Main Application Setup
+app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("play", play))
+app.add_handler(CommandHandler("leaderboard", leaderboard))
+app.add_handler(CommandHandler("joke", joke))
+app.add_handler(CommandHandler("quote", quote))
+app.add_handler(CommandHandler("horoscope", horoscope))
+app.add_handler(CommandHandler("meme", meme))
+app.add_handler(CallbackQueryHandler(handle_answer))
 
 if __name__ == "__main__":
-    main()
+    app.run_polling()
