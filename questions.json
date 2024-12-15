@@ -793,8 +793,7 @@
         "question": "Which popular social media platform was launched in 2004?",
         "options": ["Facebook", "Twitter", "Instagram", "TikTok"],
         "answer": "Facebook"
-    }
-      ][
+    },
     {
         "question": "What is the largest mammal in the world?",
         "options": ["Blue Whale", "Elephant", "Giraffe", "Whale Shark"],
