@@ -40,7 +40,7 @@ SCORES = {}  # Dictionary to track user scores
 DAILY_HOROSCOPE = {}  # Tracks user's horoscope usage per day
 REFERRALS = {}  # Tracks referrals for extra tries
 REQUIRED_CHANNEL = "@destitans"  # The username of the required channel
-REDIRECT_CHANNEL = "https://t.me/cybrpnk7"  # The channel to send new users to
+BOT_USERNAME = "destitansfunbot"  # Replace with your bot's username
 
 
 # Check User Membership in Channel
@@ -53,11 +53,23 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return False
 
 
-# Start Command
+# Start Command with Referral Handling
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    user_id = user.id
+    referred_by = context.args[0] if context.args else None
+
+    # Handle referral if present
+    if referred_by and referred_by.isdigit():
+        referred_by = int(referred_by)
+        if referred_by != user_id:  # Prevent self-referrals
+            REFERRALS[referred_by] = REFERRALS.get(referred_by, 0) + 1
+            await update.message.reply_text(
+                f"Referral accepted! {referred_by} has gained extra horoscope tries."
+            )
+
+    referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
     if await is_user_member(update, context):
-        referral_code = f"ref-{user.id}"
         await update.message.reply_text(
             f"Welcome {user.first_name}! Ready for some fun?\n"
             f"Commands:\n"
@@ -66,7 +78,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"/quote - A Random Quote\n"
             f"/horoscope - Daily Horoscope\n"
             f"/meme - A Meme\n"
-            f"\nRefer a friend using your code: `{referral_code}` and get extra horoscope tries!"
+            f"/refer - Get your referral link\n"
+            f"\nShare your referral link to get extra horoscope tries: {referral_link}"
         )
     else:
         await update.message.reply_text(
@@ -74,6 +87,45 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Join here: {REQUIRED_CHANNEL}\n\n"
             f"Once you've joined, come back and type /start again!"
         )
+
+
+# Referral Command
+async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    user_id = user.id
+    referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
+
+    await update.message.reply_text(
+        f"Here's your referral link:\n\n"
+        f"{referral_link}\n\n"
+        f"Share this link with friends! For each friend who starts the bot using your link, "
+        f"you'll get an extra horoscope try for the day."
+    )
+
+
+# Daily Horoscope Command
+async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    user_id = user.id
+    today = datetime.date.today()
+
+    # Check if user has already used the horoscope today
+    if DAILY_HOROSCOPE.get(user_id) == today and REFERRALS.get(user_id, 0) == 0:
+        await update.message.reply_text(
+            f"You've already used your daily horoscope! Refer someone using your link to get extra tries."
+        )
+        return
+
+    # Deduct referral try if applicable
+    if DAILY_HOROSCOPE.get(user_id) == today:
+        REFERRALS[user_id] -= 1
+
+    # Mark horoscope as used for today
+    DAILY_HOROSCOPE[user_id] = today
+
+    # Send a random horoscope
+    random_horoscope = random.choice(HOROSCOPES)
+    await update.message.reply_text(random_horoscope)
 
 
 # Trivia Play Command
@@ -128,44 +180,6 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Start a new question
     await play(query.message, context)
-
-
-# Daily Horoscope Command
-async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    user_id = user.id
-    today = datetime.date.today()
-
-    # Check if user has already used the horoscope today
-    if DAILY_HOROSCOPE.get(user_id) == today and REFERRALS.get(user_id, 0) == 0:
-        await update.message.reply_text(
-            f"You've already used your daily horoscope! Refer someone using your referral code to get extra tries."
-        )
-        return
-
-    # Deduct referral try if applicable
-    if DAILY_HOROSCOPE.get(user_id) == today:
-        REFERRALS[user_id] -= 1
-
-    # Mark horoscope as used for today
-    DAILY_HOROSCOPE[user_id] = today
-
-    # Send a random horoscope
-    random_horoscope = random.choice(HOROSCOPES)
-    await update.message.reply_text(random_horoscope)
-
-
-# Referral Command
-async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    referred_user_id = context.args[0] if context.args else None
-
-    if referred_user_id and referred_user_id.startswith("ref-"):
-        referred_user_id = int(referred_user_id.split("-")[1])
-        REFERRALS[referred_user_id] = REFERRALS.get(referred_user_id, 0) + 1
-        await update.message.reply_text("Referral successful! You've earned extra horoscope tries.")
-    else:
-        await update.message.reply_text("Invalid referral code. Please try again.")
 
 
 # Main Application Setup
