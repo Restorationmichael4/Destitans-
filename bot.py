@@ -2,27 +2,46 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 import json
 import random
+import datetime
 from config import BOT_TOKEN
 
 # Load Data from JSON Files
-with open("questions.json", "r") as file:
-    QUESTIONS = json.load(file)
+try:
+    with open("questions.json", "r") as file:
+        QUESTIONS = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    QUESTIONS = []
 
-with open("jokes.json", "r") as file:
-    JOKES = json.load(file)
+try:
+    with open("jokes.json", "r") as file:
+        JOKES = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    JOKES = []
 
-with open("quotes.json", "r") as file:
-    QUOTES = json.load(file)
+try:
+    with open("quotes.json", "r") as file:
+        QUOTES = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    QUOTES = []
 
-with open("horoscopes.json", "r") as file:
-    HOROSCOPES = json.load(file)
+try:
+    with open("horoscopes.json", "r") as file:
+        HOROSCOPES = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    HOROSCOPES = []
 
-with open("memes.json", "r") as file:
-    MEMES = json.load(file)
+try:
+    with open("memes.json", "r") as file:
+        MEMES = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    MEMES = []
 
 SCORES = {}  # Dictionary to track user scores
+DAILY_HOROSCOPE = {}  # Tracks user's horoscope usage per day
+REFERRALS = {}  # Tracks referrals for extra tries
 REQUIRED_CHANNEL = "@destitans"  # The username of the required channel
 REDIRECT_CHANNEL = "https://t.me/cybrpnk7"  # The channel to send new users to
+
 
 # Check User Membership in Channel
 async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -33,12 +52,21 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         return False
 
+
 # Start Command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     if await is_user_member(update, context):
+        referral_code = f"ref-{user.id}"
         await update.message.reply_text(
-            f"Welcome {user.first_name}! Ready for some fun? Type /play for trivia, /joke for a joke, /quote for a quote, /horoscope for a horoscope, or /meme for a meme!"
+            f"Welcome {user.first_name}! Ready for some fun?\n"
+            f"Commands:\n"
+            f"/play - Trivia\n"
+            f"/joke - A Random Joke\n"
+            f"/quote - A Random Quote\n"
+            f"/horoscope - Daily Horoscope\n"
+            f"/meme - A Meme\n"
+            f"\nRefer a friend using your code: `{referral_code}` and get extra horoscope tries!"
         )
     else:
         await update.message.reply_text(
@@ -46,6 +74,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Join here: {REQUIRED_CHANNEL}\n\n"
             f"Once you've joined, come back and type /start again!"
         )
+
 
 # Trivia Play Command
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,6 +99,7 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Send question with options
     await update.message.reply_text(question["question"], reply_markup=keyboard)
+
 
 # Handle Trivia Answer Callback
 async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -99,89 +129,52 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Start a new question
     await play(query.message, context)
 
-# Command to Show Leaderboard
-async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to view the leaderboard!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /leaderboard again!"
-        )
-        return
 
-    if not SCORES:
-        await update.message.reply_text("No scores yet! Play some games to get started.")
-        return
-
-    leaderboard_text = "🏆 Leaderboard 🏆\n\n"
-    sorted_scores = sorted(SCORES.items(), key=lambda x: x[1], reverse=True)
-    for user_id, score in sorted_scores:
-        leaderboard_text += f"User {user_id}: {score}\n"
-
-    await update.message.reply_text(leaderboard_text)
-
-# Command to Get a Random Joke
-async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to get jokes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /joke again!"
-        )
-        return
-
-    random_joke = random.choice(JOKES)
-    await update.message.reply_text(random_joke)
-
-# Command to Get a Random Quote
-async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to get quotes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /quote again!"
-        )
-        return
-
-    random_quote = random.choice(QUOTES)
-    await update.message.reply_text(random_quote)
-
-# Command to Get a Horoscope
+# Daily Horoscope Command
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
+    user = update.effective_user
+    user_id = user.id
+    today = datetime.date.today()
+
+    # Check if user has already used the horoscope today
+    if DAILY_HOROSCOPE.get(user_id) == today and REFERRALS.get(user_id, 0) == 0:
         await update.message.reply_text(
-            f"You need to join our channel to get horoscopes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /horoscope again!"
+            f"You've already used your daily horoscope! Refer someone using your referral code to get extra tries."
         )
         return
 
+    # Deduct referral try if applicable
+    if DAILY_HOROSCOPE.get(user_id) == today:
+        REFERRALS[user_id] -= 1
+
+    # Mark horoscope as used for today
+    DAILY_HOROSCOPE[user_id] = today
+
+    # Send a random horoscope
     random_horoscope = random.choice(HOROSCOPES)
     await update.message.reply_text(random_horoscope)
 
-# Command to Get a Meme
-async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to get memes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /meme again!"
-        )
-        return
 
-    random_meme = random.choice(MEMES)
-    await update.message.reply_photo(random_meme)
+# Referral Command
+async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    referred_user_id = context.args[0] if context.args else None
+
+    if referred_user_id and referred_user_id.startswith("ref-"):
+        referred_user_id = int(referred_user_id.split("-")[1])
+        REFERRALS[referred_user_id] = REFERRALS.get(referred_user_id, 0) + 1
+        await update.message.reply_text("Referral successful! You've earned extra horoscope tries.")
+    else:
+        await update.message.reply_text("Invalid referral code. Please try again.")
+
 
 # Main Application Setup
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("play", play))
-app.add_handler(CommandHandler("leaderboard", leaderboard))
-app.add_handler(CommandHandler("joke", joke))
-app.add_handler(CommandHandler("quote", quote))
 app.add_handler(CommandHandler("horoscope", horoscope))
-app.add_handler(CommandHandler("meme", meme))
+app.add_handler(CommandHandler("refer", refer))
 app.add_handler(CallbackQueryHandler(handle_answer))
 
 if __name__ == "__main__":
