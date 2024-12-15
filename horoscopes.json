@@ -1,52 +1,50 @@
-{
-  "horoscopes": [
-    {"sign": "Aries", "message": "Today is a day to take action. Embrace your energy and tackle challenges head-on. Your determination will bring you success."},
-    {"sign": "Taurus", "message": "Focus on stability and balance today. Hard work will pay off, but don’t forget to relax and enjoy life's little pleasures."},
-    {"sign": "Gemini", "message": "Communication is key today. Express your thoughts clearly and listen with an open heart. A new connection might bring surprises."},
-    {"sign": "Cancer", "message": "Trust your intuition today. You’ll find that your inner voice leads you to the right path and opportunities."},
-    {"sign": "Leo", "message": "Shine brightly, Leo! Confidence and charisma will attract people and opportunities. Embrace your leadership skills."},
-    {"sign": "Virgo", "message": "Attention to detail will serve you well. Focus on your goals and make incremental progress with patience."},
-    {"sign": "Libra", "message": "Seek balance in all aspects of your life. Harmonious interactions will bring inner peace and satisfaction."},
-    {"sign": "Scorpio", "message": "Embrace change and let go of old patterns. Growth will come when you step out of your comfort zone."},
-    {"sign": "Sagittarius", "message": "Adventure is calling. Be open to new experiences, as travel or learning something new will bring joy."},
-    {"sign": "Capricorn", "message": "Stay focused on your long-term goals. Discipline and persistence will yield impressive results."},
-    {"sign": "Aquarius", "message": "Innovation and creativity will be your strengths today. Think outside the box and bring your ideas to life."},
-    {"sign": "Pisces", "message": "Embrace your creativity and let your imagination guide you. Artistic endeavors will bring inner fulfillment."},
-    {"sign": "Aries", "message": "Passion and determination will drive your success. Trust your instincts and move forward without hesitation."},
-    {"sign": "Taurus", "message": "Ground yourself today. Embrace stability and focus on small tasks to build your future step by step."},
-    {"sign": "Gemini", "message": "Your curiosity will lead to new discoveries. Embrace change and be open to new ideas and people."},
-    {"sign": "Cancer", "message": "Nurture your relationships. A meaningful conversation will strengthen bonds and bring harmony."},
-    {"sign": "Leo", "message": "Confidence is your key to success today. Step into the spotlight and showcase your unique talents."},
-    {"sign": "Virgo", "message": "Organize your thoughts and create a plan. Efficiency will help you achieve your goals with precision."},
-    {"sign": "Libra", "message": "Focus on balance in your personal and professional life. Compromise will bring harmony and satisfaction."},
-    {"sign": "Scorpio", "message": "Your intensity is your power. Use it to transform obstacles into opportunities and achieve your goals."},
-    {"sign": "Sagittarius", "message": "Embrace spontaneity. New opportunities might arise unexpectedly, bringing growth and happiness."},
-    {"sign": "Capricorn", "message": "Persistence will be your ally. Work hard and don’t let setbacks deter your progress."},
-    {"sign": "Aquarius", "message": "Innovation and progress are on your side. Share your ideas and collaborate with others to succeed."},
-    {"sign": "Pisces", "message": "Trust your inner wisdom. Embrace creativity and let your dreams inspire your reality."},
-    {"sign": "Aries", "message": "Take charge of your path. Confidence and courage will bring new adventures your way."},
-    {"sign": "Taurus", "message": "Patience and perseverance will bring success. Don’t rush, but make consistent progress."},
-    {"sign": "Gemini", "message": "Your communication skills will open doors. Connect with others and share your vision."},
-    {"sign": "Cancer", "message": "Emotional connections will strengthen today. Offer support and receive love in return."},
-    {"sign": "Leo", "message": "Be bold and take risks. Your charisma and leadership will help you overcome any challenge."},
-    {"sign": "Virgo", "message": "Attention to detail will bring clarity and success. Focus on your tasks with determination."},
-    {"sign": "Libra", "message": "Harmony is your goal. Meditate, reflect, and find equilibrium in your thoughts and actions."},
-    {"sign": "Scorpio", "message": "Passion and resilience will guide you. Embrace transformation and grow stronger."},
-    {"sign": "Sagittarius", "message": "Seek new horizons. Travel, explore, and let new experiences shape your future."},
-    {"sign": "Capricorn", "message": "Discipline is your strength. Set your sights on your goals and work tirelessly to achieve them."},
-    {"sign": "Aquarius", "message": "Creativity and originality will bring success. Think differently and make your mark."},
-    {"sign": "Pisces", "message": "Let your heart guide you. Intuition and inner wisdom will bring clarity and direction."},
-    {"sign": "Aries", "message": "Take bold actions. Your energy and determination will bring unexpected success."},
-    {"sign": "Taurus", "message": "Stability is your focus. Hard work and persistence will bring long-term rewards."},
-    {"sign": "Gemini", "message": "Your adaptability will serve you well. Embrace new opportunities with an open mind."},
-    {"sign": "Cancer", "message": "Strengthen your connections. Relationships bring support and inner peace."},
-    {"sign": "Leo", "message": "Let your confidence shine. Stand tall and embrace the opportunities that come your way."},
-    {"sign": "Virgo", "message": "Clarity and precision will guide you. Focus on details and achieve your goals with purpose."},
-    {"sign": "Libra", "message": "Balance your life and find peace. Harmonious interactions will bring joy and stability."},
-    {"sign": "Scorpio", "message": "Transformation is your theme. Embrace change and find power in resilience."},
-    {"sign": "Sagittarius", "message": "Adventure awaits. Embrace new experiences and let your curiosity drive your path."},
-    {"sign": "Capricorn", "message": "Hard work and persistence will pay off. Success comes to those who never give up."},
-    {"sign": "Aquarius", "message": "Innovation and creativity are your strengths. Share your ideas and make a difference."},
-    {"sign": "Pisces", "message": "Trust your dreams and intuition. Your inner world holds the key to your success."}
-  ]
-}
+[
+    {
+        "sign": "Aries",
+        "message": "Today is a day to take action. Embrace your energy and tackle challenges head-on. Your determination will bring you success."
+    },
+    {
+        "sign": "Taurus",
+        "message": "Focus on stability and balance today. Hard work will pay off, but don’t forget to relax and enjoy life's little pleasures."
+    },
+    {
+        "sign": "Gemini",
+        "message": "Communication is key today. Express your thoughts clearly and listen with an open heart. A new connection might bring surprises."
+    },
+    {
+        "sign": "Cancer",
+        "message": "Trust your intuition today. You’ll find that your inner voice leads you to the right path and opportunities."
+    },
+    {
+        "sign": "Leo",
+        "message": "Shine brightly, Leo! Confidence and charisma will attract people and opportunities. Embrace your leadership skills."
+    },
+    {
+        "sign": "Virgo",
+        "message": "Attention to detail will serve you well. Focus on your goals and make incremental progress with patience."
+    },
+    {
+        "sign": "Libra",
+        "message": "Seek balance in all aspects of your life. Harmonious interactions will bring inner peace and satisfaction."
+    },
+    {
+        "sign": "Scorpio",
+        "message": "Embrace change and let go of old patterns. Growth will come when you step out of your comfort zone."
+    },
+    {
+        "sign": "Sagittarius",
+        "message": "Adventure is calling. Be open to new experiences, as travel or learning something new will bring joy."
+    },
+    {
+        "sign": "Capricorn",
+        "message": "Stay focused on your long-term goals. Discipline and persistence will yield impressive results."
+    },
+    {
+        "sign": "Aquarius",
+        "message": "Innovation and creativity will be your strengths today. Think outside the box and bring your ideas to life."
+    },
+    {
+        "sign": "Pisces",
+        "message": "Embrace your creativity and let your imagination guide you. Artistic endeavors will bring inner fulfillment."
+    }
+]
