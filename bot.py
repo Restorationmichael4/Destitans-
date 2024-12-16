@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 import json
 import random
@@ -64,7 +64,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-# /play Command
+# /play Command with regular Telegram buttons (not inline)
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_user_member(update, context):
         await update.message.reply_text(
@@ -78,45 +78,48 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No trivia questions available. Try again later!")
         return
 
+    user_id = update.effective_user.id
+
+    if "current_question" in context.user_data and context.user_data["current_question"]:
+        await update.message.reply_text("You must finish the current question before starting a new one.")
+        return
+
     # Get a random question
     question = random.choice(QUESTIONS)
     context.user_data["current_question"] = question
 
-    # Create inline buttons for options
-    options = [
-        InlineKeyboardButton(text=option, callback_data=option)
+    # Create Telegram buttons for options
+    buttons = [
+        [KeyboardButton(option)]
         for option in question["options"]
     ]
-    keyboard = InlineKeyboardMarkup.from_column(options)
+    keyboard = ReplyKeyboardMarkup(buttons, resize_keyboard=True, one_time_keyboard=True)
 
-    # Send question with options
+    # Send question with buttons
     await update.message.reply_text(
         f"{question['question']}", reply_markup=keyboard
     )
 
 
-# Callback to handle trivia answers
-async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    user_id = query.from_user.id
+# Handle answers for trivia questions
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
 
-    question = context.user_data.get("current_question")
-    if not question:
-        await query.answer("No active question! Use /play to start.")
+    if "current_question" not in context.user_data or not context.user_data["current_question"]:
         return
 
-    selected_option = query.data
-    correct_answer = question["answer"]
+    selected_option = update.message.text
+    question = context.user_data.get("current_question")
 
-    if selected_option == correct_answer:
+    if selected_option == question["answer"]:
         LEADERBOARD[user_id] = LEADERBOARD.get(user_id, 0) + 1
-        await query.answer("Correct! 🎉")
+        await update.message.reply_text("Correct! 🎉")
     else:
-        await query.answer("Wrong! 😢")
+        await update.message.reply_text("Wrong! 😢")
 
     # Send correct answer and user's current score
-    await query.edit_message_text(
-        f"The correct answer was: {correct_answer}\n"
+    await update.message.reply_text(
+        f"The correct answer was: {question['answer']}\n"
         f"Your current score: {LEADERBOARD.get(user_id, 0)}"
     )
 
@@ -124,29 +127,7 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["current_question"] = None
 
 
-# /leaderboard Command
-async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to view the leaderboard!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /leaderboard again!"
-        )
-        return
-
-    if not LEADERBOARD:
-        await update.message.reply_text("No scores yet! Play some games to get started.")
-        return
-
-    sorted_scores = sorted(LEADERBOARD.items(), key=lambda x: x[1], reverse=True)
-    leaderboard_text = "🏆 Leaderboard 🏆\n\n"
-    for user_id, score in sorted_scores:
-        leaderboard_text += f"User {user_id}: {score}\n"
-
-    await update.message.reply_text(leaderboard_text)
-
-
-# /joke Command
+# Register other commands
 async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if JOKES:
         await update.message.reply_text(random.choice(JOKES))
@@ -154,7 +135,6 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No jokes available. Try again later!")
 
 
-# /quote Command
 async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if QUOTES:
         await update.message.reply_text(random.choice(QUOTES))
@@ -162,7 +142,6 @@ async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No quotes available. Try again later!")
 
 
-# /horoscope Command
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if HOROSCOPES:
         await update.message.reply_text(random.choice(HOROSCOPES))
@@ -170,7 +149,6 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No horoscopes available. Try again later!")
 
 
-# /meme Command
 async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if MEMES:
         await update.message.reply_photo(random.choice(MEMES))
@@ -178,14 +156,12 @@ async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No memes available. Try again later!")
 
 
-# /refer Command
 async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
     await update.message.reply_text(f"Your referral link is:\n{referral_link}")
 
 
-# /support Command
 async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     if len(context.args) == 0:
@@ -205,24 +181,6 @@ async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Support is not available at the moment.")
 
 
-# Reply to a support request
-async def reply_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != OWNER_ID:
-        return
-
-    if len(context.args) < 2:
-        await update.message.reply_text(
-            "To reply, use: /reply <user_id> <message>"
-        )
-        return
-
-    user_id = int(context.args[0])
-    message = " ".join(context.args[1:])
-    await context.bot.send_message(chat_id=user_id, text=f"Reply from the bot owner:\n\n{message}")
-    await update.message.reply_text("Your reply has been sent.")
-
-
-# /broadcast Command
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
         return
@@ -244,19 +202,18 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Main Application Setup
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-# Register Command Handlers
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("play", play))
 app.add_handler(CommandHandler("joke", joke))
 app.add_handler(CommandHandler("quote", quote))
 app.add_handler(CommandHandler("horoscope", horoscope))
 app.add_handler(CommandHandler("meme", meme))
-app.add_handler(CommandHandler("leaderboard", leaderboard))
 app.add_handler(CommandHandler("refer", refer))
 app.add_handler(CommandHandler("support", support))
-app.add_handler(CommandHandler("reply", reply_support))
 app.add_handler(CommandHandler("broadcast", broadcast))
-app.add_handler(CallbackQueryHandler(handle_answer))
+
+# Use MessageHandler to handle answers for trivia questions
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
 if __name__ == "__main__":
     app.run_polling()
