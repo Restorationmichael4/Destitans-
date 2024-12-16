@@ -1,13 +1,17 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+import json
+import random
+import os
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# Load your JSON files (as before)
-import json
-import os
-import random
-
+# Bot Token from Environment Variable
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
+# Required Channel Settings
+REQUIRED_CHANNEL = "@destitans"  # Channel username
+REDIRECT_CHANNEL = "https://t.me/cybrpnk7"  # Channel link
+
+# Load Data from JSON Files
 with open("questions.json", "r") as file:
     QUESTIONS = json.load(file)
 
@@ -17,15 +21,13 @@ with open("jokes.json", "r") as file:
 with open("quotes.json", "r") as file:
     QUOTES = json.load(file)
 
+with open("horoscopes.json", "r") as file:
+    HOROSCOPES = json.load(file)
+
 with open("memes.json", "r") as file:
     MEMES = json.load(file)
 
 SCORES = {}
-
-# Required Channel Settings
-REQUIRED_CHANNEL = "@destitans"
-REDIRECT_CHANNEL = "https://t.me/cybrpnk7"
-
 
 # Check User Membership in Channel
 async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -36,31 +38,26 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         return False
 
-
 # Start Command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-
     if await is_user_member(update, context):
-        # Define the keyboard layout
-        keyboard = [
-            [KeyboardButton("/play 🎮"), KeyboardButton("/joke 😂")],
-            [KeyboardButton("/quote ✨"), KeyboardButton("/horoscope 🔮")],
-            [KeyboardButton("/meme 🖼️"), KeyboardButton("/leaderboard 📊")]
-        ]
-        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
-        # Send a welcome message with the keyboard buttons
         await update.message.reply_text(
-            f"Welcome {user.first_name}! 🎉\n\nChoose a command from the menu below:",
-            reply_markup=reply_markup
+            f"Welcome {user.first_name}! 🎉\n\n"
+            "Here are the commands you can use:\n"
+            "/play - Play Trivia 🎮\n"
+            "/joke - Get a Joke 😂\n"
+            "/quote - Inspirational Quote ✨\n"
+            "/horoscope <sign> 🔮\n"
+            "/meme - Random Meme 🖼️\n"
+            "/leaderboard - Check your score 📊"
         )
     else:
         await update.message.reply_text(
             f"Hi {user.first_name}, you need to join our channel first to use this bot.\n\n"
-            f"Join here: {REDIRECT_CHANNEL}\n\nThen type /start again!"
+            f"Join here: {REDIRECT_CHANNEL}\n\n"
+            "Then type /start again!"
         )
-
 
 # Trivia Command
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,7 +67,6 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    # Select a random question
     question = random.choice(QUESTIONS)
     context.user_data["current_question"] = question
 
@@ -81,7 +77,6 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = InlineKeyboardMarkup.from_column(options)
 
     await update.message.reply_text(question["question"], reply_markup=keyboard)
-
 
 # Handle Trivia Answer Callback
 async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -107,56 +102,46 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Your current score: {SCORES.get(user_id, 0)}"
     )
 
-    context.user_data["current_question"] = None
-
-
 # Command to Send a Joke
 async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
     joke = random.choice(JOKES)
     await update.message.reply_text(joke)
-
 
 # Command to Send a Quote
 async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     quote = random.choice(QUOTES)
     await update.message.reply_text(quote)
 
-
-# Command to Send a Meme
+# Meme Command
 async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
     meme = random.choice(MEMES)
     await update.message.reply_photo(meme)
 
-
-# Leaderboard Command
-async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not SCORES:
-        await update.message.reply_text("No scores yet! Start playing with /play 🎮")
+# Horoscope Command
+async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    args = context.args
+    if not args:
+        await update.message.reply_text("Please provide a zodiac sign! Example: /horoscope aries")
         return
+    sign = args[0].lower()
+    if sign in HOROSCOPES:
+        await update.message.reply_text(HOROSCOPES[sign])
+    else:
+        await update.message.reply_text("Invalid sign. Please use a valid zodiac sign.")
 
-    leaderboard_text = "🏆 Leaderboard 🏆\n\n"
-    for user_id, score in sorted(SCORES.items(), key=lambda x: x[1], reverse=True):
-        user = await context.bot.get_chat(user_id)
-        leaderboard_text += f"{user.first_name}: {score} points\n"
-
-    await update.message.reply_text(leaderboard_text)
-
-
-# Main Function
+# Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("play", play))
+    app.add_handler(CallbackQueryHandler(handle_answer))
     app.add_handler(CommandHandler("joke", joke))
     app.add_handler(CommandHandler("quote", quote))
     app.add_handler(CommandHandler("meme", meme))
-    app.add_handler(CommandHandler("leaderboard", leaderboard))
-    app.add_handler(CallbackQueryHandler(handle_answer))
+    app.add_handler(CommandHandler("horoscope", horoscope))
 
     print("Bot is running...")
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
