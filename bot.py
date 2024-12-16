@@ -130,7 +130,25 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     today_date = datetime.date.today()
 
-    # Check if user's birth date is already stored
+    # Step 1: Check if the user provided a date of birth in the command
+    if context.args:
+        birth_date = context.args[0]
+
+        # Validate the date format
+        if len(birth_date) == 5 and "/" in birth_date:
+            USER_BIRTH_DATES[user_id] = birth_date  # Store birth date
+            await update.message.reply_text(
+                f"Got your birth date as {birth_date}. Now you can use /horoscope to get your personalized horoscope."
+            )
+            return
+
+        else:
+            await update.message.reply_text(
+                "Invalid date format. Please use /horoscope dd/mm (e.g., /horoscope 04/09)."
+            )
+            return
+
+    # Step 2: If birth date is already stored
     if user_id not in USER_BIRTH_DATES:
         await update.message.reply_text(
             "You need to provide your birth date first in dd/mm format.\n"
@@ -138,9 +156,11 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    # Determine zodiac sign from birth month and day
     day, month = map(int, USER_BIRTH_DATES[user_id].split('/'))
     zodiac = get_zodiac_sign(day, month)
 
+    # Step 3: Check if horoscope has already been requested today
     if USER_LAST_REQUEST_DATE.get(user_id) == today_date:
         await update.message.reply_text("You've already received today's horoscope. Try again tomorrow.")
         return
@@ -170,17 +190,6 @@ def get_zodiac_sign(day, month):
         if (month == m1 and day >= d1) or (month == m2 and day <= d2):
             return sign
     return "Capricorn"
-
-async def handle_birth_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    birth_date = update.message.text.split(" ")[1]
-
-    if len(birth_date) != 5 or not "/" in birth_date:
-        await update.message.reply_text("Invalid date format! Please use dd/mm, for example, 04/09.")
-        return
-
-    USER_BIRTH_DATES[user_id] = birth_date
-    await update.message.reply_text(f"Got your birth date as {birth_date}. Now you may use /horoscope to get your personalized horoscope.")
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
