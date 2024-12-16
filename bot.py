@@ -119,26 +119,26 @@ async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Horoscope Command
 import datetime
+import random
 
 # Dictionary to store user birth dates
 USER_BIRTH_DATES = {}
 USER_LAST_REQUEST_DATE = {}
 USER_HOROSCOPE_HISTORY = {}
 
-# Horoscope Retrieval Function
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     today_date = datetime.date.today()
 
-    # Step 1: Check if the user provided a date of birth in the command
     if context.args:
         birth_date = context.args[0]
 
-        # Validate the date format
+        # Validate the provided birth date format (dd/mm)
         if len(birth_date) == 5 and "/" in birth_date:
-            USER_BIRTH_DATES[user_id] = birth_date  # Store birth date
+            USER_BIRTH_DATES[user_id] = birth_date  # Store birth date tied to user ID
+
             await update.message.reply_text(
-                f"Got your birth date as {birth_date}. Now you can use /horoscope to get your personalized horoscope."
+                f"Got your birth date as {birth_date}. Now use /horoscope to get your personalized horoscope."
             )
             return
 
@@ -148,7 +148,6 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
 
-    # Step 2: If birth date is already stored
     if user_id not in USER_BIRTH_DATES:
         await update.message.reply_text(
             "You need to provide your birth date first in dd/mm format.\n"
@@ -160,7 +159,7 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     day, month = map(int, USER_BIRTH_DATES[user_id].split('/'))
     zodiac = get_zodiac_sign(day, month)
 
-    # Step 3: Check if horoscope has already been requested today
+    # Check if horoscope was already requested today
     if USER_LAST_REQUEST_DATE.get(user_id) == today_date:
         await update.message.reply_text("You've already received today's horoscope. Try again tomorrow.")
         return
@@ -168,6 +167,7 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     exhausted_indices = USER_HOROSCOPE_HISTORY.get(user_id, {}).get(zodiac, [])
     horoscopes_list = HOROSCOPES.get(zodiac, [])
 
+    # Ensure new horoscopes without repetition until exhausted
     available_indices = list(range(len(horoscopes_list)))
     remaining_indices = list(set(available_indices) - set(exhausted_indices))
 
@@ -184,12 +184,35 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"{zodiac}'s Horoscope: {selected_horoscope}")
 
-# Function to determine zodiac sign from birth month and day
+
 def get_zodiac_sign(day, month):
-    for sign, (m1, d1, m2, d2) in ZODIAC_SIGNS.items():
-        if (month == m1 and day >= d1) or (month == m2 and day <= d2):
+    # Define zodiac signs and their date ranges
+    zodiac_ranges = {
+        "Aquarius": ((20, 1), (18, 2)),
+        "Pisces": ((19, 2), (20, 3)),
+        "Aries": ((20, 3), (19, 4)),
+        "Taurus": ((19, 4), (20, 5)),
+        "Gemini": ((20, 5), (21, 6)),
+        "Cancer": ((21, 6), (22, 7)),
+        "Leo": ((22, 7), (22, 8)),
+        "Virgo": ((22, 8), (22, 9)),
+        "Libra": ((22, 9), (23, 10)),
+        "Scorpio": ((23, 10), (22, 11)),
+        "Sagittarius": ((22, 11), (21, 12)),
+        "Capricorn": ((21, 12), (19, 1)),
+    }
+
+    for sign, ((start_day, start_month), (end_day, end_month)) in zodiac_ranges.items():
+        if (month == start_month and day >= start_day) or \
+           (month == end_month and day <= end_day):
             return sign
+
     return "Capricorn"
+
+
+# Horoscope data from JSON file
+with open("horoscopes.json", "r") as file:
+    HOROSCOPES = json.load(file)
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
