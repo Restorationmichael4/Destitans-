@@ -2,15 +2,20 @@ import json
 import random
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
-import datetime
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
 # Bot Token from Environment Variable
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
 # Required Channel Settings
 REQUIRED_CHANNEL = "@destitans"  # Channel username
-REDIRECT_CHANNEL = "https://t.me/cybrpnk7"  # Channel link
+REDIRECT_CHANNEL = "https://t.me/destitans"  # Channel link
+
+# Bot Owner ID (for Support Messages)
+BOT_OWNER_ID = 6784672039
+
+# Referral Tracking
+REFERRALS = {}
 
 # Load Data from JSON Files
 with open("questions.json", "r") as file:
@@ -39,9 +44,38 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         return False
 
-# Start Command
+# Send Referral Message
+async def send_referral_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    ref_link = f"https://t.me/{context.bot.username}?start={user.id}"
+    await update.message.reply_text(
+        "Support this bot by sharing it with your friends! Use your unique referral link:\n\n"
+        f"{ref_link}\n\n"
+        "For every friend that joins through your link, you'll receive a thank-you message!"
+    )
+
+# Referral Start Handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    args = context.args
+
+    # Check for referral
+    if args and args[0].isdigit():
+        referrer_id = int(args[0])
+        if referrer_id != user.id:
+            if referrer_id not in REFERRALS:
+                REFERRALS[referrer_id] = []
+            if user.id not in REFERRALS[referrer_id]:
+                REFERRALS[referrer_id].append(user.id)
+                try:
+                    await context.bot.send_message(
+                        chat_id=referrer_id,
+                        text=f"Thanks for sharing! {user.first_name} joined using your referral link."
+                    )
+                except Exception:
+                    pass
+
+    # Check if user is a channel member
     if await is_user_member(update, context):
         await update.message.reply_text(
             f"Welcome {user.first_name}! 🎉\n\n"
@@ -50,10 +84,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "/joke - Get a Joke 😂\n"
             "/quote - Inspirational Quote ✨\n"
             "/horoscope <sign> 🔮\n"
-            "/date <dd/mm> - Find your Zodiac Sign 🌟\n"
             "/meme - Random Meme 🖼️\n"
+            "/support - Send a message to the bot admin 🛠️\n"
             "/leaderboard - Check your score 📊"
         )
+        await send_referral_message(update, context)
     else:
         await update.message.reply_text(
             f"Hi {user.first_name}, you need to join our channel first to use this bot.\n\n"
@@ -61,12 +96,45 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Then type /start again!"
         )
 
+# Support Command
+async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_user_member(update, context):
+        await update.message.reply_text(f"Join our channel first to use this feature: {REDIRECT_CHANNEL}")
+        return
+
+    user = update.effective_user
+    message = " ".join(context.args)
+    if not message:
+        await update.message.reply_text("Please provide a message! Example: /support I need help.")
+        return
+
+    support_message = f"Message from {user.first_name} (ID: {user.id}):\n\n{message}"
+    await context.bot.send_message(chat_id=BOT_OWNER_ID, text=support_message)
+    await update.message.reply_text("Your message has been sent to the admin!")
+    await send_referral_message(update, context)
+
+# Reply Command (Admin Only)
+async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != BOT_OWNER_ID:
+        return
+
+    args = context.args
+    if len(args) < 2:
+        await update.message.reply_text("Usage: /reply <user_id> <message>")
+        return
+
+    user_id = args[0]
+    message = " ".join(args[1:])
+    try:
+        await context.bot.send_message(chat_id=user_id, text=message)
+        await update.message.reply_text("Reply sent successfully!")
+    except Exception:
+        await update.message.reply_text("Failed to send reply. Please check the user ID.")
+
 # Trivia Command
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to play trivia!\n\nJoin here: {REDIRECT_CHANNEL}"
-        )
+        await update.message.reply_text(f"Join our channel to play trivia: {REDIRECT_CHANNEL}")
         return
 
     question = random.choice(QUESTIONS)
@@ -79,114 +147,21 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = InlineKeyboardMarkup.from_column(options)
 
     await update.message.reply_text(question["question"], reply_markup=keyboard)
+    await send_referral_message(update, context)
 
-# Handle Trivia Answer Callback
-async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    question = context.user_data.get("current_question")
-    user_id = query.from_user.id
-
-    if not question:
-        await query.answer("No active question. Use /play to start!")
-        return
-
-    selected_option = query.data
-    correct_answer = question["answer"]
-
-    if selected_option == correct_answer:
-        SCORES[user_id] = SCORES.get(user_id, 0) + 1
-        await query.answer("Correct! 🎉")
-    else:
-        await query.answer("Wrong! 😢")
-
-    await query.edit_message_text(
-        f"The correct answer was: {correct_answer}\n"
-        f"Your current score: {SCORES.get(user_id, 0)}"
-    )
-
-# Joke Command
-async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    joke = random.choice(JOKES)
-    await update.message.reply_text(joke)
-
-# Quote Command
-async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    quote = random.choice(QUOTES)
-    await update.message.reply_text(quote)
-
-# Meme Command
-async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    meme = random.choice(MEMES)
-    await update.message.reply_photo(meme)
-
-# Horoscope Command
-async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    args = context.args
-    if not args:
-        await update.message.reply_text("Please provide a zodiac sign! Example: /horoscope aries")
-        return
-
-    sign = args[0].lower()
-    if sign in HOROSCOPES:
-        horoscope_list = HOROSCOPES[sign]
-        if horoscope_list:
-            selected_horoscope = random.choice(horoscope_list)
-            await update.message.reply_text(f"**{sign.capitalize()} Horoscope:**\n{selected_horoscope}", parse_mode="Markdown")
-        else:
-            await update.message.reply_text(f"No horoscope found for {sign}.")
-    else:
-        await update.message.reply_text("Invalid sign. Please use a valid zodiac sign like Aries, Taurus, Virgo, etc.")
-
-# Date Command to Determine Zodiac Sign
-ZODIAC_DATES = {
-    "Aquarius": (datetime.date(2000, 1, 20), datetime.date(2000, 2, 18)),
-    "Pisces": (datetime.date(2000, 2, 19), datetime.date(2000, 3, 20)),
-    "Aries": (datetime.date(2000, 3, 21), datetime.date(2000, 4, 19)),
-    "Taurus": (datetime.date(2000, 4, 20), datetime.date(2000, 5, 20)),
-    "Gemini": (datetime.date(2000, 5, 21), datetime.date(2000, 6, 20)),
-    "Cancer": (datetime.date(2000, 6, 21), datetime.date(2000, 7, 22)),
-    "Leo": (datetime.date(2000, 7, 23), datetime.date(2000, 8, 22)),
-    "Virgo": (datetime.date(2000, 8, 23), datetime.date(2000, 9, 22)),
-    "Libra": (datetime.date(2000, 9, 23), datetime.date(2000, 10, 22)),
-    "Scorpio": (datetime.date(2000, 10, 23), datetime.date(2000, 11, 21)),
-    "Sagittarius": (datetime.date(2000, 11, 22), datetime.date(2000, 12, 21)),
-    "Capricorn": (datetime.date(2000, 12, 22), datetime.date(2001, 1, 19))
-}
-
-async def date(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) != 1:
-        await update.message.reply_text("Please send your birth date in dd/mm format. Example: /date 04/09")
-        return
-
-    try:
-        day, month = map(int, context.args[0].split('/'))
-        birth_date = datetime.date(2000, month, day)
-
-        zodiac_sign = None
-        for sign, (start_date, end_date) in ZODIAC_DATES.items():
-            if start_date <= birth_date <= end_date:
-                zodiac_sign = sign
-                break
-
-        if zodiac_sign:
-            await update.message.reply_text(f"You're a {zodiac_sign}! ♒")
-        else:
-            await update.message.reply_text("Could not determine your zodiac sign.")
-
-    except ValueError:
-        await update.message.reply_text("Invalid date format! Use dd/mm. Example: /date 04/09")
+# Other Commands (Jokes, Quotes, Memes, Horoscope) ...
 
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("play", play))
-    app.add_handler(CallbackQueryHandler(handle_answer))
     app.add_handler(CommandHandler("joke", joke))
     app.add_handler(CommandHandler("quote", quote))
     app.add_handler(CommandHandler("meme", meme))
     app.add_handler(CommandHandler("horoscope", horoscope))
-    app.add_handler(CommandHandler("date", date))
+    app.add_handler(CommandHandler("support", support))
+    app.add_handler(CommandHandler("reply", reply))
 
     print("Bot is running...")
     app.run_polling()
