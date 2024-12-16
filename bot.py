@@ -3,6 +3,7 @@ import random
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+import datetime
 
 # Bot Token from Environment Variable
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -29,6 +30,22 @@ with open("memes.json", "r") as file:
 
 SCORES = {}
 
+# Zodiac signs and their date ranges
+ZODIAC_DATES = {
+    "Aquarius": (datetime.date(2000, 1, 20), datetime.date(2000, 2, 18)),
+    "Pisces": (datetime.date(2000, 2, 19), datetime.date(2000, 3, 20)),
+    "Aries": (datetime.date(2000, 3, 21), datetime.date(2000, 4, 19)),
+    "Taurus": (datetime.date(2000, 4, 20), datetime.date(2000, 5, 20)),
+    "Gemini": (datetime.date(2000, 5, 21), datetime.date(2000, 6, 20)),
+    "Cancer": (datetime.date(2000, 6, 21), datetime.date(2000, 7, 22)),
+    "Leo": (datetime.date(2000, 7, 23), datetime.date(2000, 8, 22)),
+    "Virgo": (datetime.date(2000, 8, 23), datetime.date(2000, 9, 22)),
+    "Libra": (datetime.date(2000, 9, 23), datetime.date(2000, 10, 22)),
+    "Scorpio": (datetime.date(2000, 10, 23), datetime.date(2000, 11, 21)),
+    "Sagittarius": (datetime.date(2000, 11, 22), datetime.date(2000, 12, 21)),
+    "Capricorn": (datetime.date(2000, 12, 22), datetime.date(2001, 1, 19))
+}
+
 # Check User Membership in Channel
 async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -49,6 +66,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "/joke - Get a Joke 😂\n"
             "/quote - Inspirational Quote ✨\n"
             "/horoscope <sign> 🔮\n"
+            "/date <dd/mm> - Find your Zodiac Sign 🌟\n"
             "/meme - Random Meme 🖼️\n"
             "/leaderboard - Check your score 📊"
         )
@@ -58,6 +76,49 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Join here: {REDIRECT_CHANNEL}\n\n"
             "Then type /start again!"
         )
+
+# Horoscope Command
+async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) != 1:
+        await update.message.reply_text("Usage: /horoscope <SIGN>\nExample: /horoscope aries")
+        return
+
+    sign = context.args[0].capitalize()
+    if sign not in HOROSCOPES:
+        await update.message.reply_text(f"Invalid zodiac sign {sign}. Try: Aries, Virgo, Libra, etc.")
+        return
+
+    horoscope_list = HOROSCOPES.get(sign, [])
+    if not horoscope_list:
+        await update.message.reply_text(f"No horoscope found for {sign}")
+        return
+
+    selected_horoscope = random.choice(horoscope_list)
+    await update.message.reply_text(f"**{sign} Horoscope:**\n{selected_horoscope}", parse_mode="Markdown")
+
+# Date Command
+async def date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) != 1:
+        await update.message.reply_text("Please send your birth date in dd/mm format. Example: /date 04/09")
+        return
+
+    try:
+        day, month = map(int, context.args[0].split('/'))
+        birth_date = datetime.date(2000, month, day)
+
+        zodiac_sign = None
+        for sign, (start_date, end_date) in ZODIAC_DATES.items():
+            if start_date <= birth_date <= end_date:
+                zodiac_sign = sign
+                break
+
+        if zodiac_sign:
+            await update.message.reply_text(f"You're a {zodiac_sign}! ♒")
+        else:
+            await update.message.reply_text("Could not determine your zodiac sign.")
+
+    except ValueError:
+        await update.message.reply_text("Invalid date format! Use dd/mm. Example: /date 04/09")
 
 # Trivia Command
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -117,97 +178,6 @@ async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
     meme = random.choice(MEMES)
     await update.message.reply_photo(meme)
 
-# Horoscope Command
-import datetime
-import random
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-
-# Dictionary to store user birth dates
-USER_BIRTH_DATES = {}
-USER_LAST_REQUEST_DATE = {}
-USER_HOROSCOPE_HISTORY = {}
-
-# Load Horoscope Data from JSON
-with open("horoscopes.json", "r") as file:
-    HOROSCOPES = json.load(file)
-
-async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    today_date = datetime.date.today()
-
-    # If user provides a birth date in dd/mm format
-    if context.args:
-        birth_date = context.args[0]
-
-        if len(birth_date) == 5 and "/" in birth_date:
-            # Save birth date tied to the user's ID
-            USER_BIRTH_DATES[user_id] = birth_date
-            await update.message.reply_text(
-                f"Got your birth date as {birth_date}. Now use /horoscope to get your personalized horoscope."
-            )
-            return
-
-        await update.message.reply_text("Invalid date format. Please use /horoscope dd/mm (e.g., /horoscope 04/09).")
-        return
-
-    # If birth date is not provided, check if it's already stored
-    if user_id not in USER_BIRTH_DATES:
-        await update.message.reply_text(
-            "You need to provide your birth date first in dd/mm format.\nFor example, send: /horoscope 04/09"
-        )
-        return
-
-    # Determine zodiac sign from birth month and day
-    day, month = map(int, USER_BIRTH_DATES[user_id].split('/'))
-    zodiac = get_zodiac_sign(day, month)
-
-    # Check if horoscope was already requested today
-    if USER_LAST_REQUEST_DATE.get(user_id) == today_date:
-        await update.message.reply_text("You've already received today's horoscope. Try again tomorrow.")
-        return
-
-    exhausted_indices = USER_HOROSCOPE_HISTORY.get(user_id, {}).get(zodiac, [])
-    horoscopes_list = HOROSCOPES.get(zodiac, [])
-
-    available_indices = list(range(len(horoscopes_list)))
-    remaining_indices = list(set(available_indices) - set(exhausted_indices))
-
-    if not remaining_indices:
-        exhausted_indices = []
-        remaining_indices = available_indices
-
-    selected_index = random.choice(remaining_indices)
-    selected_horoscope = horoscopes_list[selected_index]
-
-    exhausted_indices.append(selected_index)
-    USER_HOROSCOPE_HISTORY.setdefault(user_id, {})[zodiac] = exhausted_indices
-    USER_LAST_REQUEST_DATE[user_id] = today_date
-
-    await update.message.reply_text(f"{zodiac}'s Horoscope: {selected_horoscope}")
-
-def get_zodiac_sign(day, month):
-    zodiac_ranges = {
-        "Aquarius": ((20, 1), (18, 2)),
-        "Pisces": ((19, 2), (20, 3)),
-        "Aries": ((20, 3), (19, 4)),
-        "Taurus": ((19, 4), (20, 5)),
-        "Gemini": ((20, 5), (21, 6)),
-        "Cancer": ((21, 6), (22, 7)),
-        "Leo": ((22, 7), (22, 8)),
-        "Virgo": ((22, 8), (22, 9)),
-        "Libra": ((22, 9), (23, 10)),
-        "Scorpio": ((23, 10), (22, 11)),
-        "Sagittarius": ((22, 11), (21, 12)),
-        "Capricorn": ((21, 12), (19, 1)),
-    }
-
-    for sign, ((start_day, start_month), (end_day, end_month)) in zodiac_ranges.items():
-        if (month == start_month and day >= start_day) or \
-           (month == end_month and day <= end_day):
-            return sign
-
-    return "Capricorn"
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -218,6 +188,7 @@ def main():
     app.add_handler(CommandHandler("quote", quote))
     app.add_handler(CommandHandler("meme", meme))
     app.add_handler(CommandHandler("horoscope", horoscope))
+    app.add_handler(CommandHandler("date", date))
 
     print("Bot is running...")
     app.run_polling()
