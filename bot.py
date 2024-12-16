@@ -6,41 +6,27 @@ from config import BOT_TOKEN
 
 # Owner's User ID
 OWNER_ID = 6784672039
+ALL_USERS = set()  # Store all user IDs that interact with the bot
 
 # Load Data from JSON Files
-try:
-    with open("questions.json", "r") as file:
-        QUESTIONS = json.load(file)
-except (FileNotFoundError, json.JSONDecodeError):
-    QUESTIONS = []
+def load_data(filename, default):
+    try:
+        with open(filename, "r") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return default
 
-try:
-    with open("jokes.json", "r") as file:
-        JOKES = json.load(file)
-except (FileNotFoundError, json.JSONDecodeError):
-    JOKES = []
+QUESTIONS = load_data("questions.json", [])
+JOKES = load_data("jokes.json", [])
+QUOTES = load_data("quotes.json", [])
+HOROSCOPES = load_data("horoscopes.json", [])
+MEMES = load_data("memes.json", [])
 
-try:
-    with open("quotes.json", "r") as file:
-        QUOTES = json.load(file)
-except (FileNotFoundError, json.JSONDecodeError):
-    QUOTES = []
-
-try:
-    with open("horoscopes.json", "r") as file:
-        HOROSCOPES = json.load(file)
-except (FileNotFoundError, json.JSONDecodeError):
-    HOROSCOPES = []
-
-try:
-    with open("memes.json", "r") as file:
-        MEMES = json.load(file)
-except (FileNotFoundError, json.JSONDecodeError):
-    MEMES = []
-
+# Globals
 REQUIRED_CHANNEL = "@destitans"
 BOT_USERNAME = "destitansfunbot"
 LEADERBOARD = {}  # User scores for the leaderboard
+
 
 # Check if user is a member of the required channel
 async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -55,6 +41,7 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # /start Command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    ALL_USERS.add(user.id)  # Add user ID to the set of users
     if await is_user_member(update, context):
         await update.message.reply_text(
             f"Welcome {user.first_name}! Ready for some fun?\n"
@@ -67,6 +54,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"/leaderboard - View the leaderboard\n"
             f"/refer - Get your referral link\n"
             f"/support - Send a message to the bot owner\n"
+            f"/broadcast (Owner only) - Broadcast a message to all users\n"
         )
     else:
         await update.message.reply_text(
@@ -158,6 +146,45 @@ async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(leaderboard_text)
 
 
+# /joke Command
+async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if JOKES:
+        await update.message.reply_text(random.choice(JOKES))
+    else:
+        await update.message.reply_text("No jokes available. Try again later!")
+
+
+# /quote Command
+async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if QUOTES:
+        await update.message.reply_text(random.choice(QUOTES))
+    else:
+        await update.message.reply_text("No quotes available. Try again later!")
+
+
+# /horoscope Command
+async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if HOROSCOPES:
+        await update.message.reply_text(random.choice(HOROSCOPES))
+    else:
+        await update.message.reply_text("No horoscopes available. Try again later!")
+
+
+# /meme Command
+async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if MEMES:
+        await update.message.reply_photo(random.choice(MEMES))
+    else:
+        await update.message.reply_text("No memes available. Try again later!")
+
+
+# /refer Command
+async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
+    await update.message.reply_text(f"Your referral link is:\n{referral_link}")
+
+
 # /support Command
 async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -168,17 +195,50 @@ async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     message = " ".join(context.args)
-
     if OWNER_ID:
         await context.bot.send_message(
             chat_id=OWNER_ID,
             text=f"Message from {user.full_name} (ID: {user.id}):\n\n{message}",
         )
-        await update.message.reply_text(
-            "Your message has been sent to the bot owner. They'll get back to you soon!"
-        )
+        await update.message.reply_text("Your message has been sent to the bot owner.")
     else:
         await update.message.reply_text("Support is not available at the moment.")
+
+
+# Reply to a support request
+async def reply_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != OWNER_ID:
+        return
+
+    if len(context.args) < 2:
+        await update.message.reply_text(
+            "To reply, use: /reply <user_id> <message>"
+        )
+        return
+
+    user_id = int(context.args[0])
+    message = " ".join(context.args[1:])
+    await context.bot.send_message(chat_id=user_id, text=f"Reply from the bot owner:\n\n{message}")
+    await update.message.reply_text("Your reply has been sent.")
+
+
+# /broadcast Command
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != OWNER_ID:
+        return
+
+    if len(context.args) == 0:
+        await update.message.reply_text("Usage: /broadcast <message>")
+        return
+
+    message = " ".join(context.args)
+    for user_id in ALL_USERS:
+        try:
+            await context.bot.send_message(chat_id=user_id, text=message)
+        except Exception:
+            pass
+
+    await update.message.reply_text("Broadcast sent successfully!")
 
 
 # Main Application Setup
@@ -187,8 +247,15 @@ app = ApplicationBuilder().token(BOT_TOKEN).build()
 # Register Command Handlers
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("play", play))
+app.add_handler(CommandHandler("joke", joke))
+app.add_handler(CommandHandler("quote", quote))
+app.add_handler(CommandHandler("horoscope", horoscope))
+app.add_handler(CommandHandler("meme", meme))
 app.add_handler(CommandHandler("leaderboard", leaderboard))
+app.add_handler(CommandHandler("refer", refer))
 app.add_handler(CommandHandler("support", support))
+app.add_handler(CommandHandler("reply", reply_support))
+app.add_handler(CommandHandler("broadcast", broadcast))
 app.add_handler(CallbackQueryHandler(handle_answer))
 
 if __name__ == "__main__":
