@@ -1,9 +1,11 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 import json
 import random
-from datetime import datetime
 from config import BOT_TOKEN
+
+# Owner's User ID
+OWNER_ID = 6784672039
 
 # Load Data from JSON Files
 try:
@@ -38,11 +40,7 @@ except (FileNotFoundError, json.JSONDecodeError):
 
 REQUIRED_CHANNEL = "@destitans"
 BOT_USERNAME = "destitansfunbot"
-
-REFERRALS = {}  # Tracks referrals for extra tries
-DAILY_HOROSCOPE = {}  # Tracks horoscope usage
 LEADERBOARD = {}  # User scores for the leaderboard
-
 
 # Check if user is a member of the required channel
 async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -57,20 +55,6 @@ async def is_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # /start Command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    user_id = user.id
-    referred_by = context.args[0] if context.args else None
-
-    # Handle referral
-    if referred_by and referred_by.isdigit():
-        referred_by = int(referred_by)
-        if referred_by != user_id:  # Prevent self-referrals
-            REFERRALS[referred_by] = REFERRALS.get(referred_by, 0) + 1
-            await update.message.reply_text(
-                f"Referral accepted! User {referred_by} has gained an extra horoscope try."
-            )
-
-    referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
-
     if await is_user_member(update, context):
         await update.message.reply_text(
             f"Welcome {user.first_name}! Ready for some fun?\n"
@@ -81,8 +65,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"/horoscope - Daily Horoscope\n"
             f"/meme - A Meme\n"
             f"/leaderboard - View the leaderboard\n"
-            f"/refer - Get your referral link\n\n"
-            f"Share your referral link to earn extra horoscope tries: {referral_link}"
+            f"/refer - Get your referral link\n"
+            f"/support - Send a message to the bot owner\n"
         )
     else:
         await update.message.reply_text(
@@ -174,13 +158,27 @@ async def leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(leaderboard_text)
 
 
-# /refer Command
-async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    referral_link = f"http://t.me/{BOT_USERNAME}?start={user_id}"
-    await update.message.reply_text(
-        f"Share this link with your friends to get extra horoscope tries:\n{referral_link}"
-    )
+# /support Command
+async def support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    if len(context.args) == 0:
+        await update.message.reply_text(
+            "To send a message to the bot owner, use /support followed by your message.\nExample:\n/support I need help with trivia."
+        )
+        return
+
+    message = " ".join(context.args)
+
+    if OWNER_ID:
+        await context.bot.send_message(
+            chat_id=OWNER_ID,
+            text=f"Message from {user.full_name} (ID: {user.id}):\n\n{message}",
+        )
+        await update.message.reply_text(
+            "Your message has been sent to the bot owner. They'll get back to you soon!"
+        )
+    else:
+        await update.message.reply_text("Support is not available at the moment.")
 
 
 # Main Application Setup
@@ -190,7 +188,7 @@ app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("play", play))
 app.add_handler(CommandHandler("leaderboard", leaderboard))
-app.add_handler(CommandHandler("refer", refer))
+app.add_handler(CommandHandler("support", support))
 app.add_handler(CallbackQueryHandler(handle_answer))
 
 if __name__ == "__main__":
