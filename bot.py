@@ -122,57 +122,44 @@ import datetime
 
 # Dictionary to store user birth dates
 USER_BIRTH_DATES = {}
-
-# Dictionary to store user's last horoscope retrieval date
 USER_LAST_REQUEST_DATE = {}
-
-# Dictionary to store user's exhausted horoscopes
 USER_HOROSCOPE_HISTORY = {}
 
+# Horoscope Retrieval Function
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     today_date = datetime.date.today()
 
-    # Check if user's birth date is stored
+    # Check if user's birth date is already stored
     if user_id not in USER_BIRTH_DATES:
         await update.message.reply_text(
-            "Please provide your birth month and day in dd/mm format. For example, 14/03 for March 14th."
+            "You need to provide your birth date first in dd/mm format.\n"
+            "For example, send: /horoscope 04/09"
         )
-        context.user_data['awaiting_birth_date'] = True
-        return
-
-    # Check if user requested a horoscope today
-    if USER_LAST_REQUEST_DATE.get(user_id) == today_date:
-        await update.message.reply_text("You've already received today's horoscope. Try again tomorrow.")
         return
 
     day, month = map(int, USER_BIRTH_DATES[user_id].split('/'))
     zodiac = get_zodiac_sign(day, month)
 
-    # Get or create user's horoscope history
-    user_history = USER_HOROSCOPE_HISTORY.get(user_id, {})
-    exhausted_indices = user_history.get(zodiac, [])
+    if USER_LAST_REQUEST_DATE.get(user_id) == today_date:
+        await update.message.reply_text("You've already received today's horoscope. Try again tomorrow.")
+        return
 
-    # Get available horoscopes for that zodiac sign
+    exhausted_indices = USER_HOROSCOPE_HISTORY.get(user_id, {}).get(zodiac, [])
     horoscopes_list = HOROSCOPES.get(zodiac, [])
 
-    # Ensure no repeated horoscope until all 30 are exhausted
     available_indices = list(range(len(horoscopes_list)))
     remaining_indices = list(set(available_indices) - set(exhausted_indices))
 
     if not remaining_indices:
-        # Reset exhausted indices for reshuffling after all are exhausted
         exhausted_indices = []
         remaining_indices = available_indices
 
     selected_index = random.choice(remaining_indices)
     selected_horoscope = horoscopes_list[selected_index]
 
-    # Save horoscope in user's exhausted history
     exhausted_indices.append(selected_index)
-    USER_HOROSCOPE_HISTORY[user_id] = {zodiac: exhausted_indices}
-
-    # Save today's request timestamp
+    USER_HOROSCOPE_HISTORY.setdefault(user_id, {})[zodiac] = exhausted_indices
     USER_LAST_REQUEST_DATE[user_id] = today_date
 
     await update.message.reply_text(f"{zodiac}'s Horoscope: {selected_horoscope}")
@@ -184,6 +171,16 @@ def get_zodiac_sign(day, month):
             return sign
     return "Capricorn"
 
+async def handle_birth_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    birth_date = update.message.text.split(" ")[1]
+
+    if len(birth_date) != 5 or not "/" in birth_date:
+        await update.message.reply_text("Invalid date format! Please use dd/mm, for example, 04/09.")
+        return
+
+    USER_BIRTH_DATES[user_id] = birth_date
+    await update.message.reply_text(f"Got your birth date as {birth_date}. Now you may use /horoscope to get your personalized horoscope.")
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
