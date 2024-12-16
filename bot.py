@@ -123,9 +123,11 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not args:
         await update.message.reply_text("Please provide a zodiac sign! Example: /horoscope aries")
         return
+    
     sign = args[0].lower()
     if sign in HOROSCOPES:
-        await update.message.reply_text(HOROSCOPES[sign])
+        horoscope_text = random.choice(HOROSCOPES[sign])  # Get only one random horoscope
+        await update.message.reply_text(horoscope_text)
     else:
         await update.message.reply_text("Invalid sign. Please use a valid zodiac sign.")
 
