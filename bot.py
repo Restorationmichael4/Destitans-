@@ -120,20 +120,26 @@ async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Horoscope Command
 import datetime
 import random
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # Dictionary to store user birth dates
 USER_BIRTH_DATES = {}
 USER_LAST_REQUEST_DATE = {}
 USER_HOROSCOPE_HISTORY = {}
 
+# Load Horoscope Data from JSON
+with open("horoscopes.json", "r") as file:
+    HOROSCOPES = json.load(file)
+
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     today_date = datetime.date.today()
 
+    # If user provides a birth date in dd/mm format
     if context.args:
         birth_date = context.args[0]
 
-        # Validate the provided birth date format (dd/mm)
         if len(birth_date) == 5 and "/" in birth_date:
             # Save birth date tied to the user's ID
             USER_BIRTH_DATES[user_id] = birth_date
@@ -145,6 +151,7 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Invalid date format. Please use /horoscope dd/mm (e.g., /horoscope 04/09).")
         return
 
+    # If birth date is not provided, check if it's already stored
     if user_id not in USER_BIRTH_DATES:
         await update.message.reply_text(
             "You need to provide your birth date first in dd/mm format.\nFor example, send: /horoscope 04/09"
@@ -201,10 +208,6 @@ def get_zodiac_sign(day, month):
             return sign
 
     return "Capricorn"
-
-# Load Horoscope data from JSON
-with open("horoscopes.json", "r") as file:
-    HOROSCOPES = json.load(file)
 # Main Function to Run Bot
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
