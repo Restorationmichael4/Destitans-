@@ -135,23 +135,19 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Validate the provided birth date format (dd/mm)
         if len(birth_date) == 5 and "/" in birth_date:
-            USER_BIRTH_DATES[user_id] = birth_date  # Store birth date tied to user ID
-
+            # Save birth date tied to the user's ID
+            USER_BIRTH_DATES[user_id] = birth_date
             await update.message.reply_text(
                 f"Got your birth date as {birth_date}. Now use /horoscope to get your personalized horoscope."
             )
             return
 
-        else:
-            await update.message.reply_text(
-                "Invalid date format. Please use /horoscope dd/mm (e.g., /horoscope 04/09)."
-            )
-            return
+        await update.message.reply_text("Invalid date format. Please use /horoscope dd/mm (e.g., /horoscope 04/09).")
+        return
 
     if user_id not in USER_BIRTH_DATES:
         await update.message.reply_text(
-            "You need to provide your birth date first in dd/mm format.\n"
-            "For example, send: /horoscope 04/09"
+            "You need to provide your birth date first in dd/mm format.\nFor example, send: /horoscope 04/09"
         )
         return
 
@@ -167,7 +163,6 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
     exhausted_indices = USER_HOROSCOPE_HISTORY.get(user_id, {}).get(zodiac, [])
     horoscopes_list = HOROSCOPES.get(zodiac, [])
 
-    # Ensure new horoscopes without repetition until exhausted
     available_indices = list(range(len(horoscopes_list)))
     remaining_indices = list(set(available_indices) - set(exhausted_indices))
 
@@ -184,9 +179,7 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"{zodiac}'s Horoscope: {selected_horoscope}")
 
-
 def get_zodiac_sign(day, month):
-    # Define zodiac signs and their date ranges
     zodiac_ranges = {
         "Aquarius": ((20, 1), (18, 2)),
         "Pisces": ((19, 2), (20, 3)),
@@ -209,8 +202,7 @@ def get_zodiac_sign(day, month):
 
     return "Capricorn"
 
-
-# Horoscope data from JSON file
+# Load Horoscope data from JSON
 with open("horoscopes.json", "r") as file:
     HOROSCOPES = json.load(file)
 # Main Function to Run Bot
