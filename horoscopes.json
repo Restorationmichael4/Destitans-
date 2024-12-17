@@ -1,5 +1,4 @@
-{
-  "aries": [
+[
     "You will find new opportunities today. Trust your instincts and take bold steps.",
     "Energy and enthusiasm are on your side. Channel them into productive ventures.",
     "A leadership role may present itself—don't shy away.",
@@ -34,9 +33,7 @@
     "Someone may seek your guidance today.",
     "Trust your abilities; you’re stronger than you think.",
     "Surprises are in store—prepare to adapt.",
-    "Take time to reflect on recent actions."
-  ],
-  "taurus": [
+    "Take time to reflect on recent actions.",
     "Today is a day for relaxation and self-care. Avoid unnecessary stress.",
     "Focus on creating a stable foundation for future plans.",
     "Your patience will lead to significant rewards.",
@@ -70,9 +67,7 @@
     "Your practical nature will serve you well.",
     "Be mindful of how you spend your energy.",
     "A breakthrough moment may lead to clarity.",
-    "Focus on creating harmony in relationships."
-  ],
-  "gemini": [
+    "Focus on creating harmony in relationships.",
     "Your communication skills will shine today. Use them to solve pending issues.",
     "Curiosity will lead you to exciting discoveries.",
     "An opportunity to learn something new may arise.",
@@ -103,9 +98,7 @@
     "A lighthearted attitude will ease tensions today.",
     "Take time to nurture important connections.",
     "An interesting opportunity may arise—stay alert.",
-    "Avoid gossip; focus on meaningful conversations."
-  ],
-  "cancer": [
+    "Avoid gossip; focus on meaningful conversations.",
     "Your intuition will guide you toward the right path today.",
     "Focus on creating a nurturing environment at home.",
     "A family connection may bring unexpected opportunities.",
@@ -136,9 +129,7 @@
     "Focus on your mental and emotional well-being.",
     "You may find comfort in reconnecting with old friends.",
     "A quiet evening will bring mental clarity and peace.",
-    "Seek harmony and balance in everything you do."
-  ],
-  "leo": [
+    "Seek harmony and balance in everything you do.",
     "Your charisma will attract people and opportunities today.",
     "Take the lead and inspire others with your confidence.",
     "A creative endeavor will bring joy and satisfaction.",
@@ -168,9 +159,7 @@
     "A personal reflection may bring inner peace.",
     "Celebrate your creativity with something tangible.",
     "Be open to change—it may bring better outcomes.",
-    "Reconnect with your passion and follow your heart."
-  ],
-  "virgo": [
+    "Reconnect with your passion and follow your heart.",
     "Your attention to detail will bring impressive results.",
     "Focus on organizing your life for long-term stability.",
     "Small steps today will lead to greater success tomorrow.",
@@ -199,9 +188,7 @@
     "Your commitment to excellence will be rewarded.",
     "Let go of perfectionism and embrace progress.",
     "Focus on learning new skills that add value to you.",
-    "Be practical but remain open to creative solutions."
-  ],
-  "libra": [
+    "Be practical but remain open to creative solutions.",
     "Seek balance and harmony in all areas of life.",
     "Your diplomatic skills will resolve conflicts smoothly.",
     "Collaborating with others will bring success and growth.",
@@ -227,9 +214,7 @@
     "Work on maintaining a positive social circle.",
     "Seek opportunities to collaborate and share ideas.",
     "Make time for art or creative hobbies.",
-    "Embrace challenges with grace and diplomacy."
-  ],
-  "scorpio": [
+    "Embrace challenges with grace and diplomacy.",
     "Your determination and passion will drive your success.",
     "Trust your inner voice—it knows the right path.",
     "A deep emotional insight will help resolve conflicts.",
@@ -259,9 +244,7 @@
     "Your dedication and passion will attract success.",
     "Focus on teamwork and collaboration to achieve goals.",
     "Take time for introspection and self-discovery.",
-    "A supportive friendship may become a valuable connection."
-  ],
-  "sagittarius": [
+    "A supportive friendship may become a valuable connection.",
     "Adventure and opportunity await you today.",
     "Trust your optimism; it will guide you to new horizons.",
     "Take a leap of faith and embrace new experiences.",
@@ -290,9 +273,7 @@
     "Invest time in personal projects and creative pursuits.",
     "Be proactive in your relationships and career.",
     "Celebrate the joy of learning and exploration.",
-    "Trust that every experience has a purpose."
-  ],
-  "capricorn": [
+    "Trust that every experience has a purpose.",
     "Discipline and focus will drive your path to success.",
     "Trust in your ambition—it will bring fruitful results.",
     "Take time to plan your future with long-term goals.",
@@ -320,9 +301,7 @@
     "Stay resilient in the face of challenges.",
     "Your ambition will drive you to achieve greatness.",
     "Focus on setting clear and achievable milestones.",
-    "Take time to acknowledge your personal progress."
-  ],
-  "aquarius": [
+    "Take time to acknowledge your personal progress.",
     "Your innovative ideas will bring positive change.",
     "Trust your intuition—it often holds the right answers.",
     "Embrace uniqueness and celebrate individuality.",
@@ -348,9 +327,7 @@
     "Collaborate with others to achieve collective success.",
     "Stay adaptable and open to change.",
     "Trust your creativity—it’s your unique asset.",
-    "Focus on social connections that uplift your spirit."
-  ],
-  "pisces": [
+    "Focus on social connections that uplift your spirit.",
     "Your intuition will lead you to the right path today.",
     "Focus on your dreams—they may reveal valuable insights.",
     "Embrace your creativity and express yourself freely.",
@@ -378,7 +355,5 @@
     "Trust that your journey is exactly as it should be.",
     "Stay connected to your inner self and listen deeply."
   ]
-}
-
 
     
