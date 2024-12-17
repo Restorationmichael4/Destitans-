@@ -1,3 +1,5 @@
+from flask import Flask
+from threading import Thread
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 import json
@@ -148,41 +150,4 @@ async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Command to Get a Horoscope
 async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to get horoscopes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /horoscope again!"
-        )
-        return
-
-    random_horoscope = random.choice(HOROSCOPES)
-    await update.message.reply_text(random_horoscope)
-
-# Command to Get a Meme
-async def meme(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_user_member(update, context):
-        await update.message.reply_text(
-            f"You need to join our channel to get memes!\n\n"
-            f"Join here: {REQUIRED_CHANNEL}\n\n"
-            f"Once you've joined, type /meme again!"
-        )
-        return
-
-    random_meme = random.choice(MEMES)
-    await update.message.reply_photo(random_meme)
-
-# Main Application Setup
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("play", play))
-app.add_handler(CommandHandler("leaderboard", leaderboard))
-app.add_handler(CommandHandler("joke", joke))
-app.add_handler(CommandHandler("quote", quote))
-app.add_handler(CommandHandler("horoscope", horoscope))
-app.add_handler(CommandHandler("meme", meme))
-app.add_handler(CallbackQueryHandler(handle_answer))
-
-if __name__ == "__main__":
-    app.run_polling()
+    if not19
